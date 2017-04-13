@@ -23,7 +23,6 @@ module.exports = function(opts, callback) {
   var app = express().disable('x-powered-by'),
       serving = {
         styles: {},
-        rendered: {},
         data: {},
         fonts: {}
       };
@@ -91,7 +90,7 @@ module.exports = function(opts, callback) {
 
   Object.keys(config.styles || {}).forEach(function(id) {
     var item = config.styles[id];
-    if (!item.style || item.style.length == 0) {
+    if (!item.style || item.style.length === 0) {
       console.log('Missing "style" property for ' + id);
       return;
     }
@@ -134,7 +133,7 @@ module.exports = function(opts, callback) {
 
   Object.keys(data).forEach(function(id) {
     var item = data[id];
-    if (!item.mbtiles || item.mbtiles.length == 0) {
+    if (!item.mbtiles || item.mbtiles.length === 0) {
       console.log('Missing "mbtiles" property for ' + id);
       return;
     }
@@ -142,7 +141,7 @@ module.exports = function(opts, callback) {
     app.use('/data/', serve_data(options, serving.data, item, id, serving.styles));
   });
 
-  app.get('/styles.json', function(req, res, next) {
+  app.get('/styles.json', function(req, res) {
     var result = [];
     var query = req.query.key ? ('?key=' + req.query.key) : '';
     Object.keys(serving.styles).forEach(function(id) {
@@ -155,35 +154,24 @@ module.exports = function(opts, callback) {
              '/styles/' + id + '.json' + query
       });
     });
-    res.send(result);
+    res.json(result);
   });
 
-  var addTileJSONs = function(arr, req, type) {
-    Object.keys(serving[type]).forEach(function(id) {
-      var info = clone(serving[type][id]);
-      var path = '';
-      if (type == 'rendered') {
-        path = 'styles/' + id + '/rendered';
-      } else {
-        path = type + '/' + id;
-      }
+  function sendTileJSONs(req, res) {
+    var result = [];
+    Object.keys(serving.data).forEach(function(id) {
+      var info = clone(serving.data[id]);
+      var path = 'data/' + id;
       info.tiles = utils.getTileUrls(req, info.tiles, path, info.format, {
         'pbf': options.pbfAlias
       });
-      arr.push(info);
+      result.push(info);
     });
-    return arr;
-  };
+    res.json(result);
+  }
 
-  app.get('/rendered.json', function(req, res, next) {
-    res.send(addTileJSONs([], req, 'rendered'));
-  });
-  app.get('/data.json', function(req, res, next) {
-    res.send(addTileJSONs([], req, 'data'));
-  });
-  app.get('/index.json', function(req, res, next) {
-    res.send(addTileJSONs(addTileJSONs([], req, 'rendered'), req, 'data'));
-  });
+  app.get('/index.json', sendTileJSONs);
+  app.get('/data.json', sendTileJSONs);
 
   var server = app.listen(process.env.PORT || opts.port, process.env.BIND || opts.bind, function() {
     console.log('Listening at http://%s:%d/',
