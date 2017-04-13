@@ -39,7 +39,6 @@ var testTileJSON = function(url) {
 
 describe('Metadata', function() {
   testTileJSONArray('/index.json');
-  testTileJSONArray('/rendered.json');
   testTileJSONArray('/data.json');
 
   describe('/styles.json is valid array', function() {
@@ -63,6 +62,5 @@ describe('Metadata', function() {
     });
   });
 
-  testTileJSON('/styles/test-style/rendered.json');
   testTileJSON('/data/openmaptiles.json');
 });
