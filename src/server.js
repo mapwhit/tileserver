@@ -7,16 +7,12 @@ process.env.UV_THREADPOOL_SIZE =
 var fs = require('fs'),
     path = require('path');
 
-var base64url = require('base64url'),
-    clone = require('clone'),
+var clone = require('clone'),
     cors = require('cors'),
     express = require('express'),
-    handlebars = require('handlebars'),
-    mercator = new (require('@mapbox/sphericalmercator'))(),
     morgan = require('morgan');
 
-var packageJson = require('../package'),
-    serve_font = require('./serve_font'),
+var serve_font = require('./serve_font'),
     serve_style = require('./serve_style'),
     serve_data = require('./serve_data'),
     utils = require('./utils');
@@ -187,155 +183,6 @@ module.exports = function(opts, callback) {
   });
   app.get('/index.json', function(req, res, next) {
     res.send(addTileJSONs(addTileJSONs([], req, 'rendered'), req, 'data'));
-  });
-
-  //------------------------------------
-  // serve web presentations
-  app.use('/', express.static(path.join(__dirname, '../public/resources')));
-
-  var templates = path.join(__dirname, '../public/templates');
-  var serveTemplate = function(urlPath, template, dataGetter) {
-    var templateFile = templates + '/' + template + '.tmpl';
-    if (template == 'index') {
-      if (options.frontPage === false) {
-        return;
-      } else if (options.frontPage &&
-                 options.frontPage.constructor === String) {
-        templateFile = path.resolve(paths.root, options.frontPage);
-      }
-    }
-    fs.readFile(templateFile, function(err, content) {
-      if (err) {
-        console.error('Template not found:', err);
-      }
-      var compiled = handlebars.compile(content.toString());
-
-      app.use(urlPath, function(req, res, next) {
-        var data = {};
-        if (dataGetter) {
-          data = dataGetter(req);
-          if (!data) {
-            return res.status(404).send('Not found');
-          }
-        }
-        data['server_version'] = packageJson.name + ' v' + packageJson.version;
-        data['is_light'] = isLight;
-        data['key_query_part'] =
-            req.query.key ? 'key=' + req.query.key + '&amp;' : '';
-        data['key_query'] = req.query.key ? '?key=' + req.query.key : '';
-        return res.status(200).send(compiled(data));
-      });
-    });
-  };
-
-  serveTemplate('/$', 'index', function(req) {
-    var styles = clone(config.styles || {});
-    Object.keys(styles).forEach(function(id) {
-      var style = styles[id];
-      style.name = (serving.styles[id] || serving.rendered[id] || {}).name;
-      style.serving_data = serving.styles[id];
-      style.serving_rendered = serving.rendered[id];
-      if (style.serving_rendered) {
-        var center = style.serving_rendered.center;
-        if (center) {
-          style.viewer_hash = '#' + center[2] + '/' +
-                              center[1].toFixed(5) + '/' +
-                              center[0].toFixed(5);
-
-          var centerPx = mercator.px([center[0], center[1]], center[2]);
-          style.thumbnail = center[2] + '/' +
-              Math.floor(centerPx[0] / 256) + '/' +
-              Math.floor(centerPx[1] / 256) + '.png';
-        }
-
-        var query = req.query.key ? ('?key=' + req.query.key) : '';
-        style.wmts_link = 'http://wmts.maptiler.com/' +
-          base64url('http://' + req.headers.host +
-            '/styles/' + id + '/rendered.json' + query) + '/wmts';
-
-        var tiles = utils.getTileUrls(
-            req, style.serving_rendered.tiles,
-            'styles/' + id + '/rendered', style.serving_rendered.format);
-        style.xyz_link = tiles[0];
-      }
-    });
-    var data = clone(serving.data || {});
-    Object.keys(data).forEach(function(id) {
-      var data_ = data[id];
-      var center = data_.center;
-      if (center) {
-        data_.viewer_hash = '#' + center[2] + '/' +
-                            center[1].toFixed(5) + '/' +
-                            center[0].toFixed(5);
-      }
-      data_.is_vector = data_.format == 'pbf';
-      if (!data_.is_vector) {
-        if (center) {
-          var centerPx = mercator.px([center[0], center[1]], center[2]);
-          data_.thumbnail = center[2] + '/' +
-              Math.floor(centerPx[0] / 256) + '/' +
-              Math.floor(centerPx[1] / 256) + '.' + data_.format;
-        }
-
-        var query = req.query.key ? ('?key=' + req.query.key) : '';
-        data_.wmts_link = 'http://wmts.maptiler.com/' +
-          base64url('http://' + req.headers.host +
-            '/data/' + id + '.json' + query) + '/wmts';
-
-        var tiles = utils.getTileUrls(
-            req, data_.tiles, 'data/' + id, data_.format, {
-              'pbf': options.pbfAlias
-            });
-        data_.xyz_link = tiles[0];
-      }
-      if (data_.filesize) {
-        var suffix = 'kB';
-        var size = parseInt(data_.filesize, 10) / 1024;
-        if (size > 1024) {
-          suffix = 'MB';
-          size /= 1024;
-        }
-        if (size > 1024) {
-          suffix = 'GB';
-          size /= 1024;
-        }
-        data_.formatted_filesize = size.toFixed(2) + ' ' + suffix;
-      }
-    });
-    return {
-      styles: Object.keys(styles).length ? styles : null,
-      data: Object.keys(data).length ? data : null
-    };
-  });
-
-  serveTemplate('/styles/:id/$', 'viewer', function(req) {
-    var id = req.params.id;
-    var style = clone((config.styles || {})[id]);
-    if (!style) {
-      return null;
-    }
-    style.id = id;
-    style.name = (serving.styles[id] || serving.rendered[id]).name;
-    style.serving_data = serving.styles[id];
-    style.serving_rendered = serving.rendered[id];
-    return style;
-  });
-
-  /*
-  app.use('/rendered/:id/$', function(req, res, next) {
-    return res.redirect(301, '/styles/' + req.params.id + '/');
-  });
-  */
-
-  serveTemplate('/data/:id/$', 'data', function(req) {
-    var id = req.params.id;
-    var data = clone(serving.data[id]);
-    if (!data) {
-      return null;
-    }
-    data.id = id;
-    data.is_vector = data.format == 'pbf';
-    return data;
   });
 
   var server = app.listen(process.env.PORT || opts.port, process.env.BIND || opts.bind, function() {
