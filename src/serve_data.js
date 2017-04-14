@@ -8,29 +8,10 @@ var clone = require('clone'),
     express = require('express'),
     mbtiles = require('mbtiles');
 
-var tileshrinkGl;
-try {
-  tileshrinkGl = require('tileshrink-gl');
-  global.addStyleParam = true;
-} catch (e) {}
-
 var utils = require('./utils');
 
 function isGzipped(data) {
   return data[0] === 0x1f && data[1] === 0x8b;
-}
-
-function unzip(tile, fn) {
-  if (!tile.isGzipped) {
-    return fn();
-  }
-  zlib.gunzip(tile.data, function(err, buffer) {
-    if (!err) {
-      tile.data = buffer;
-      tile.isGzipped = false;
-    }
-    fn(err);
-  });
 }
 
 function zip(tile, fn) {
@@ -59,7 +40,7 @@ function initZoomRanges(min, max) {
   return ranges;
 }
 
-module.exports = function(options, repo, params, id, styles) {
+module.exports = function(options, repo, params, id) {
   var app = express().disable('x-powered-by');
 
   var mbtilesFile = path.resolve(options.paths.mbtiles, params.mbtiles);
@@ -67,27 +48,6 @@ module.exports = function(options, repo, params, id, styles) {
     'tiles': params.domains || options.domains
   };
   var zoomRanges;
-
-  var shrinkers = {};
-
-  function lookupShrinker(style) {
-    if (shrinkers[style]) {
-      return shrinkers[style];
-    }
-    var styleJSON = styles[style];
-    if (!styleJSON) {
-      return;
-    }
-    var sourceName = null;
-    for (var sourceName_ in styleJSON.sources) {
-      var source = styleJSON.sources[sourceName_];
-      if (source && source.type == 'vector' && source.url.endsWith('/' + id + '.json')) {
-        sourceName = sourceName_;
-      }
-    }
-    shrinkers[style] = tileshrinkGl.createPBFShrinker(styleJSON, sourceName);
-    return shrinkers[style];
-  }
 
   repo[id] = tileJSON;
 
@@ -153,31 +113,6 @@ module.exports = function(options, repo, params, id, styles) {
     });
   }
 
-  function shrinkTile(req, res, next) {
-    if (!tileshrinkGl) {
-      return next();
-    }
-    if (tileJSON['format'] !== 'pbf') {
-      return next();
-    }
-    var style = req.query.style;
-    if (!style) {
-      return next();
-    }
-    var tile = req.tile;
-    var shrinker = lookupShrinker(style);
-    if (!shrinker) {
-      return next();
-    }
-    unzip(tile, function(err) {
-      if (!err) {
-        tile.data = shrinker(tile.data, req.params.z, tileJSON.maxzoom);
-        //console.log(shrinker.getStats());
-      }
-      next(err);
-    });
-  }
-
   function zipTile(req, res, next) {
     zip(req.tile, next);
   }
@@ -199,7 +134,6 @@ module.exports = function(options, repo, params, id, styles) {
   app.get(tilePattern,
     checkParams,
     getTile,
-    shrinkTile,
     zipTile,
     sendTile
   );
