@@ -6,9 +6,7 @@ var fs = require('fs'),
 
 var clone = require('clone'),
     express = require('express'),
-    mbtiles = require('mbtiles'),
-    pbf = require('pbf'),
-    VectorTile = require('vector-tile').VectorTile;
+    mbtiles = require('mbtiles');
 
 var tileshrinkGl;
 try {
@@ -116,28 +114,19 @@ module.exports = function(options, repo, params, id, styles) {
     });
   });
 
-  var tilePattern = '/' + id + '/:z(\\d+)/:x(\\d+)/:y(\\d+).:format([\\w.]+)';
+  var tilePattern = '/' + id + '/:z(\\d+)/:x(\\d+)/:y(\\d+).pbf';
 
   function checkParams(req, res, next) {
     var z = req.params.z | 0,
         x = req.params.x | 0,
         y = req.params.y | 0;
-    var format = req.params.format;
 
-    if (format == options.pbfAlias) {
-      format = 'pbf';
-    }
-    if (format != tileJSON.format &&
-        !(format == 'geojson' && tileJSON.format == 'pbf')) {
-      return res.status(404).send('Invalid format');
-    }
     if (z < tileJSON.minzoom || z > tileJSON.maxzoom
         || x < 0 || x >= zoomRanges[z]
         || y < 0 || y >= zoomRanges[z]) {
       return res.status(404).send('Out of bounds');
     }
 
-    req.params.format = format;
     req.params.z = z;
     req.params.x = x;
     req.params.y = y;
@@ -189,44 +178,6 @@ module.exports = function(options, repo, params, id, styles) {
     });
   }
 
-  function formatTile(req, res, next) {
-    var format = req.params.format;
-    if (format !== 'geojson') {
-      return next();
-    }
-    var tile = req.tile;
-
-    tile.contentType = 'application/json';
-    unzip(tile, function(err) {
-      if (err) {
-        return next(err);
-      }
-
-      var x = req.params.x,
-        y = req.params.y,
-        z = req.params.z;
-      var vectorTile = new VectorTile(new pbf(tile.data));
-      var geojson = {
-        "type": "FeatureCollection",
-        "features": []
-      };
-
-      for (var layerName in vectorTile.layers) {
-        var layer = vectorTile.layers[layerName];
-        for (var i = 0; i < layer.length; i++) {
-          var feature = layer.feature(i);
-          var featureGeoJSON = feature.toGeoJSON(x, y, z);
-          featureGeoJSON.properties.layer = layerName;
-          geojson.features.push(featureGeoJSON);
-        }
-      }
-
-      tile.data = JSON.stringify(geojson);
-
-      next();
-    });
-  }
-
   function zipTile(req, res, next) {
     zip(req.tile, next);
   }
@@ -249,7 +200,6 @@ module.exports = function(options, repo, params, id, styles) {
     checkParams,
     getTile,
     shrinkTile,
-    formatTile,
     zipTile,
     sendTile
   );
