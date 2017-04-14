@@ -3,8 +3,7 @@
 'use strict';
 
 var fs = require('fs'),
-    path = require('path'),
-    request = require('request');
+    path = require('path');
 
 var mbtiles = require('mbtiles');
 var ms = require('ms');
@@ -13,9 +12,7 @@ var packageJson = require('../package');
 
 var opts = require('nomnom')
   .option('mbtiles', {
-    default: undefined,
-    help: 'MBTiles file (uses demo configuration);\n' +
-          '\t    ignored if the configuration file is also specified',
+    help: 'MBTiles file - ignored if the configuration file is also specified',
     position: 0
   })
   .option('config', {
@@ -25,7 +22,6 @@ var opts = require('nomnom')
   })
   .option('bind', {
     abbr: 'b',
-    default: undefined,
     help: 'Bind address'
   })
   .option('port', {
@@ -85,7 +81,12 @@ var startWithMBTiles = function(mbtilesFile) {
     console.log('ERROR: Not valid MBTiles file: ' + mbtilesFile);
     process.exit(1);
   }
-  var instance = new mbtiles(mbtilesFile, function(err) {
+  new mbtiles(mbtilesFile, function(err, instance) {
+    if (err) {
+      console.log('ERROR: ' + err);
+      process.exit(1);
+    }
+
     instance.getInfo(function(err, info) {
       if (err || !info) {
         console.log('ERROR: Metadata missing in the MBTiles.');
@@ -198,15 +199,6 @@ fs.stat(path.resolve(opts.config), function(err, stats) {
       if (mbtiles) {
         console.log('No MBTiles specified, using ' + mbtiles);
         return startWithMBTiles(mbtiles);
-      } else {
-        var url = 'https://github.com/klokantech/tileserver-gl/releases/download/v1.3.0/zurich_switzerland.mbtiles';
-        var filename = 'zurich_switzerland.mbtiles';
-        var stream = fs.createWriteStream(filename);
-        console.log('Downloading sample data (' + filename + ') from ' + url);
-        stream.on('finish', function() {
-          return startWithMBTiles(filename);
-        });
-        return request.get(url).pipe(stream);
       }
     }
     if (mbtiles) {
