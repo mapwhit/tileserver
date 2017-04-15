@@ -1,10 +1,10 @@
 'use strict';
 
-var path = require('path'),
-    fs = require('fs');
+var path = require('path');
 
 var clone = require('clone'),
-    express = require('express');
+    express = require('express'),
+    send = require('send');
 
 
 module.exports = function(options, repo, params, id, reportTiles, reportFont) {
@@ -102,16 +102,7 @@ module.exports = function(options, repo, params, id, reportTiles, reportFont) {
     var scale = req.params.scale,
         format = req.params.format;
     var filename = spritePath + (scale || '') + '.' + format;
-    return fs.readFile(filename, function(err, data) {
-      if (err) {
-        console.log('Sprite load error:', filename);
-        return res.status(404).send('File not found');
-      } else {
-        if (format == 'json') res.header('Content-type', 'application/json');
-        if (format == 'png') res.header('Content-type', 'image/png');
-        return res.send(data);
-      }
-    });
+    send(req, filename).pipe(res);
   });
 
   return app;
