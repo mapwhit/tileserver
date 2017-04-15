@@ -12,11 +12,8 @@
     "url": "https://github.com/pirxpilot/tileserver-gl.git"
   },
   "license": "BSD-2-Clause",
-  "engines": {
-    "node": ">=4.2.1 <5"
-  },
   "scripts": {
-    "test": "mocha test/**.js"
+    "test": "make check"
   },
   "dependencies": {
     "async": "2.2.0",
@@ -34,5 +31,8 @@
     "mocha": "^3.2.0",
     "should": "^11.2.0",
     "supertest": "^3.0.0"
-  }
+  },
+  "files": [
+    "src"
+  ]
 }
