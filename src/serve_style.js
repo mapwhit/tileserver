@@ -1,10 +1,10 @@
 'use strict';
 
-var path = require('path'),
-    fs = require('fs');
+var path = require('path');
 
 var clone = require('clone'),
-    express = require('express');
+    express = require('express'),
+    send = require('send');
 
 
 module.exports = function(options, repo, params, id, reportTiles, reportFont) {
@@ -62,15 +62,12 @@ module.exports = function(options, repo, params, id, reportTiles, reportFont) {
 
   repo[id] = styleJSON;
 
-  app.get('/' + id + '.json', function(req, res, next) {
-    var fixUrl = function(url, opt_nokey, opt_nostyle) {
+  app.get('/' + id + '.json', function(req, res) {
+    var fixUrl = function(url, opt_nokey) {
       if (!url || (typeof url !== 'string') || url.indexOf('local://') !== 0) {
         return url;
       }
       var queryParams = [];
-      if (!opt_nostyle && global.addStyleParam) {
-        queryParams.push('style=' + id);
-      }
       if (!opt_nokey && req.query.key) {
         queryParams.unshift('key=' + req.query.key);
       }
@@ -89,32 +86,23 @@ module.exports = function(options, repo, params, id, reportTiles, reportFont) {
     });
     // mapbox-gl-js viewer cannot handle sprite urls with query
     if (styleJSON_.sprite) {
-      styleJSON_.sprite = fixUrl(styleJSON_.sprite, true, true);
+      styleJSON_.sprite = fixUrl(styleJSON_.sprite, true);
     }
     if (styleJSON_.glyphs) {
-      styleJSON_.glyphs = fixUrl(styleJSON_.glyphs, false, true);
+      styleJSON_.glyphs = fixUrl(styleJSON_.glyphs, false);
     }
     return res.send(styleJSON_);
   });
 
   app.get('/' + id + '/sprite:scale(@[23]x)?\.:format([\\w]+)',
-      function(req, res, next) {
+      function(req, res) {
     if (!spritePath) {
       return res.status(404).send('File not found');
     }
     var scale = req.params.scale,
         format = req.params.format;
     var filename = spritePath + (scale || '') + '.' + format;
-    return fs.readFile(filename, function(err, data) {
-      if (err) {
-        console.log('Sprite load error:', filename);
-        return res.status(404).send('File not found');
-      } else {
-        if (format == 'json') res.header('Content-type', 'application/json');
-        if (format == 'png') res.header('Content-type', 'image/png');
-        return res.send(data);
-      }
-    });
+    send(req, filename).pipe(res);
   });
 
   return app;

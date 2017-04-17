@@ -31,11 +31,10 @@ module.exports.getTileUrls = function(req, domains, path, format, aliases) {
     });
     domains = newDomains;
   }
-  if (!domains || domains.length == 0) {
+  if (!domains || domains.length === 0) {
     domains = [req.headers.host];
   }
 
-  var key = req.query.key;
   var queryParams = [];
   if (req.query.key) {
     queryParams.push('key=' + req.query.key);

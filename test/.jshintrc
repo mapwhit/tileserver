@@ -1,0 +1,13 @@
+{
+  "eqnull": true,
+  "laxbreak": true,
+  "mocha": true,
+  "node": true,
+  "sub": true,
+  "undef": true,
+  "unused": true,
+  "globals": {
+    "supertest": false,
+    "app": false
+  }
+}

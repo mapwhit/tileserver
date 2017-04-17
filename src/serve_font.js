@@ -1,7 +1,6 @@
 'use strict';
 
-var clone = require('clone'),
-    express = require('express'),
+var express = require('express'),
     fs = require('fs'),
     path = require('path');
 
@@ -29,7 +28,7 @@ module.exports = function(options, allowedFonts) {
   });
 
   app.get('/fonts/:fontstack/:range([\\d]+-[\\d]+).pbf',
-      function(req, res, next) {
+      function(req, res) {
     var fontstack = decodeURI(req.params.fontstack);
     var range = req.params.range;
 
@@ -37,8 +36,8 @@ module.exports = function(options, allowedFonts) {
       fontPath, fontstack, range, existingFonts,
         function(err, concated) {
       if (err || concated.length === 0) {
-        console.log(err);
-        console.log(concated.length);
+        // console.log(err);
+        // console.log(concated.length);
         return res.status(400).send('');
       } else {
         res.header('Content-type', 'application/x-protobuf');
@@ -48,7 +47,7 @@ module.exports = function(options, allowedFonts) {
     });
   });
 
-  app.get('/fonts.json', function(req, res, next) {
+  app.get('/fonts.json', function(req, res) {
     res.header('Content-type', 'application/json');
     return res.send(
       Object.keys(options.serveAllFonts ? existingFonts : allowedFonts).sort()

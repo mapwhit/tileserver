@@ -7,26 +7,15 @@ process.env.UV_THREADPOOL_SIZE =
 var fs = require('fs'),
     path = require('path');
 
-var base64url = require('base64url'),
-    clone = require('clone'),
+var clone = require('clone'),
     cors = require('cors'),
     express = require('express'),
-    handlebars = require('handlebars'),
-    mercator = new (require('@mapbox/sphericalmercator'))(),
     morgan = require('morgan');
 
-var packageJson = require('../package'),
-    serve_font = require('./serve_font'),
-    serve_rendered = null,
+var serve_font = require('./serve_font'),
     serve_style = require('./serve_style'),
     serve_data = require('./serve_data'),
     utils = require('./utils');
-
-var isLight = packageJson.name.slice(-6) == '-light';
-if (!isLight) {
-  // do not require `serve_rendered` in the light package
-  serve_rendered = require('./serve_rendered');
-}
 
 module.exports = function(opts, callback) {
   console.log('Starting server');
@@ -34,7 +23,6 @@ module.exports = function(opts, callback) {
   var app = express().disable('x-powered-by'),
       serving = {
         styles: {},
-        rendered: {},
         data: {},
         fonts: {}
       };
@@ -90,11 +78,19 @@ module.exports = function(opts, callback) {
 
   var data = clone(config.data || {});
 
-  app.use(cors());
+  if (opts.cors) {
+    app.use(cors());
+  }
+  if (opts.cacheControl) {
+    app.use(function(req, res, next) {
+      req.cacheControl = opts.cacheControl;
+      next();
+    });
+  }
 
   Object.keys(config.styles || {}).forEach(function(id) {
     var item = config.styles[id];
-    if (!item.style || item.style.length == 0) {
+    if (!item.style || item.style.length === 0) {
       console.log('Missing "style" property for ' + id);
       return;
     }
@@ -131,30 +127,13 @@ module.exports = function(opts, callback) {
           serving.fonts[font] = true;
         }));
     }
-    if (item.serve_rendered !== false) {
-      if (serve_rendered) {
-        app.use('/styles/' + id + '/',
-                serve_rendered(options, serving.rendered, item, id,
-        function(mbtiles) {
-          var mbtilesFile;
-          Object.keys(data).forEach(function(id) {
-            if (id == mbtiles) {
-              mbtilesFile = data[id].mbtiles;
-            }
-          });
-          return mbtilesFile;
-        }));
-      } else {
-        item.serve_rendered = false;
-      }
-    }
   });
 
   app.use('/', serve_font(options, serving.fonts));
 
   Object.keys(data).forEach(function(id) {
     var item = data[id];
-    if (!item.mbtiles || item.mbtiles.length == 0) {
+    if (!item.mbtiles || item.mbtiles.length === 0) {
       console.log('Missing "mbtiles" property for ' + id);
       return;
     }
@@ -162,7 +141,7 @@ module.exports = function(opts, callback) {
     app.use('/data/', serve_data(options, serving.data, item, id, serving.styles));
   });
 
-  app.get('/styles.json', function(req, res, next) {
+  app.get('/styles.json', function(req, res) {
     var result = [];
     var query = req.query.key ? ('?key=' + req.query.key) : '';
     Object.keys(serving.styles).forEach(function(id) {
@@ -175,184 +154,24 @@ module.exports = function(opts, callback) {
              '/styles/' + id + '.json' + query
       });
     });
-    res.send(result);
+    res.json(result);
   });
 
-  var addTileJSONs = function(arr, req, type) {
-    Object.keys(serving[type]).forEach(function(id) {
-      var info = clone(serving[type][id]);
-      var path = '';
-      if (type == 'rendered') {
-        path = 'styles/' + id + '/rendered';
-      } else {
-        path = type + '/' + id;
-      }
+  function sendTileJSONs(req, res) {
+    var result = [];
+    Object.keys(serving.data).forEach(function(id) {
+      var info = clone(serving.data[id]);
+      var path = 'data/' + id;
       info.tiles = utils.getTileUrls(req, info.tiles, path, info.format, {
         'pbf': options.pbfAlias
       });
-      arr.push(info);
+      result.push(info);
     });
-    return arr;
-  };
+    res.json(result);
+  }
 
-  app.get('/rendered.json', function(req, res, next) {
-    res.send(addTileJSONs([], req, 'rendered'));
-  });
-  app.get('/data.json', function(req, res, next) {
-    res.send(addTileJSONs([], req, 'data'));
-  });
-  app.get('/index.json', function(req, res, next) {
-    res.send(addTileJSONs(addTileJSONs([], req, 'rendered'), req, 'data'));
-  });
-
-  //------------------------------------
-  // serve web presentations
-  app.use('/', express.static(path.join(__dirname, '../public/resources')));
-
-  var templates = path.join(__dirname, '../public/templates');
-  var serveTemplate = function(urlPath, template, dataGetter) {
-    var templateFile = templates + '/' + template + '.tmpl';
-    if (template == 'index') {
-      if (options.frontPage === false) {
-        return;
-      } else if (options.frontPage &&
-                 options.frontPage.constructor === String) {
-        templateFile = path.resolve(paths.root, options.frontPage);
-      }
-    }
-    fs.readFile(templateFile, function(err, content) {
-      if (err) {
-        console.error('Template not found:', err);
-      }
-      var compiled = handlebars.compile(content.toString());
-
-      app.use(urlPath, function(req, res, next) {
-        var data = {};
-        if (dataGetter) {
-          data = dataGetter(req);
-          if (!data) {
-            return res.status(404).send('Not found');
-          }
-        }
-        data['server_version'] = packageJson.name + ' v' + packageJson.version;
-        data['is_light'] = isLight;
-        data['key_query_part'] =
-            req.query.key ? 'key=' + req.query.key + '&amp;' : '';
-        data['key_query'] = req.query.key ? '?key=' + req.query.key : '';
-        return res.status(200).send(compiled(data));
-      });
-    });
-  };
-
-  serveTemplate('/$', 'index', function(req) {
-    var styles = clone(config.styles || {});
-    Object.keys(styles).forEach(function(id) {
-      var style = styles[id];
-      style.name = (serving.styles[id] || serving.rendered[id] || {}).name;
-      style.serving_data = serving.styles[id];
-      style.serving_rendered = serving.rendered[id];
-      if (style.serving_rendered) {
-        var center = style.serving_rendered.center;
-        if (center) {
-          style.viewer_hash = '#' + center[2] + '/' +
-                              center[1].toFixed(5) + '/' +
-                              center[0].toFixed(5);
-
-          var centerPx = mercator.px([center[0], center[1]], center[2]);
-          style.thumbnail = center[2] + '/' +
-              Math.floor(centerPx[0] / 256) + '/' +
-              Math.floor(centerPx[1] / 256) + '.png';
-        }
-
-        var query = req.query.key ? ('?key=' + req.query.key) : '';
-        style.wmts_link = 'http://wmts.maptiler.com/' +
-          base64url('http://' + req.headers.host +
-            '/styles/' + id + '/rendered.json' + query) + '/wmts';
-
-        var tiles = utils.getTileUrls(
-            req, style.serving_rendered.tiles,
-            'styles/' + id + '/rendered', style.serving_rendered.format);
-        style.xyz_link = tiles[0];
-      }
-    });
-    var data = clone(serving.data || {});
-    Object.keys(data).forEach(function(id) {
-      var data_ = data[id];
-      var center = data_.center;
-      if (center) {
-        data_.viewer_hash = '#' + center[2] + '/' +
-                            center[1].toFixed(5) + '/' +
-                            center[0].toFixed(5);
-      }
-      data_.is_vector = data_.format == 'pbf';
-      if (!data_.is_vector) {
-        if (center) {
-          var centerPx = mercator.px([center[0], center[1]], center[2]);
-          data_.thumbnail = center[2] + '/' +
-              Math.floor(centerPx[0] / 256) + '/' +
-              Math.floor(centerPx[1] / 256) + '.' + data_.format;
-        }
-
-        var query = req.query.key ? ('?key=' + req.query.key) : '';
-        data_.wmts_link = 'http://wmts.maptiler.com/' +
-          base64url('http://' + req.headers.host +
-            '/data/' + id + '.json' + query) + '/wmts';
-
-        var tiles = utils.getTileUrls(
-            req, data_.tiles, 'data/' + id, data_.format, {
-              'pbf': options.pbfAlias
-            });
-        data_.xyz_link = tiles[0];
-      }
-      if (data_.filesize) {
-        var suffix = 'kB';
-        var size = parseInt(data_.filesize, 10) / 1024;
-        if (size > 1024) {
-          suffix = 'MB';
-          size /= 1024;
-        }
-        if (size > 1024) {
-          suffix = 'GB';
-          size /= 1024;
-        }
-        data_.formatted_filesize = size.toFixed(2) + ' ' + suffix;
-      }
-    });
-    return {
-      styles: Object.keys(styles).length ? styles : null,
-      data: Object.keys(data).length ? data : null
-    };
-  });
-
-  serveTemplate('/styles/:id/$', 'viewer', function(req) {
-    var id = req.params.id;
-    var style = clone((config.styles || {})[id]);
-    if (!style) {
-      return null;
-    }
-    style.id = id;
-    style.name = (serving.styles[id] || serving.rendered[id]).name;
-    style.serving_data = serving.styles[id];
-    style.serving_rendered = serving.rendered[id];
-    return style;
-  });
-
-  /*
-  app.use('/rendered/:id/$', function(req, res, next) {
-    return res.redirect(301, '/styles/' + req.params.id + '/');
-  });
-  */
-
-  serveTemplate('/data/:id/$', 'data', function(req) {
-    var id = req.params.id;
-    var data = clone(serving.data[id]);
-    if (!data) {
-      return null;
-    }
-    data.id = id;
-    data.is_vector = data.format == 'pbf';
-    return data;
-  });
+  app.get('/index.json', sendTileJSONs);
+  app.get('/data.json', sendTileJSONs);
 
   var server = app.listen(process.env.PORT || opts.port, process.env.BIND || opts.bind, function() {
     console.log('Listening at http://%s:%d/',
