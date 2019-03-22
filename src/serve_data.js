@@ -5,7 +5,7 @@ var fs = require('fs'),
     zlib = require('zlib');
 
 var clone = require('clone'),
-    express = require('express'),
+    Router = require('router'),
     mbtiles = require('@mapbox/mbtiles');
 
 var utils = require('./utils');
@@ -41,7 +41,7 @@ function initZoomRanges(min, max) {
 }
 
 module.exports = function(options, repo, params, id) {
-  var app = express().disable('x-powered-by');
+  var router = new Router();
 
   var mbtilesFile = path.resolve(options.paths.mbtiles, params.mbtiles);
   var tileJSON = {
@@ -84,7 +84,8 @@ module.exports = function(options, repo, params, id) {
     if (z < tileJSON.minzoom || z > tileJSON.maxzoom
         || x < 0 || x >= zoomRanges[z]
         || y < 0 || y >= zoomRanges[z]) {
-      return res.status(404).send('Out of bounds');
+      res.statusCode = 404;
+      return res.end('Out of bounds');
     }
 
     req.params.z = z;
@@ -98,7 +99,8 @@ module.exports = function(options, repo, params, id) {
     source.getTile(p.z, p.x, p.y, function(err, data, headers) {
       if (err) {
         var status = /does not exist/.test(err.message) ? 404 : 500;
-        return res.status(status).send(err.message);
+        res.statusCode = status;
+        return res.end(err.message);
       }
       if (data == null) {
         return res.status(404).send('Not found');
@@ -126,26 +128,30 @@ module.exports = function(options, repo, params, id) {
     if (req.cacheControl) {
       headers['Cache-Control'] = req.cacheControl;
     }
-    res.set(headers);
 
-    res.status(200).send(req.tile.data);
+    Object.keys(headers).forEach(function(name) {
+      res.setHeader(name, headers[name]);
+    });
+
+    res.end(req.tile.data);
   }
 
-  app.get(tilePattern,
+  router.get(tilePattern,
     checkParams,
     getTile,
     zipTile,
     sendTile
   );
 
-  app.get('/' + id + '.json', function(req, res) {
+  router.get('/' + id + '.json', function(req, res) {
     var info = clone(tileJSON);
     info.tiles = utils.getTileUrls(req, info.tiles,
                                    'data/' + id, info.format, {
                                      'pbf': options.pbfAlias
                                    });
-    return res.send(info);
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify(info));
   });
 
-  return app;
+  return router;
 };

@@ -3,12 +3,12 @@
 var path = require('path');
 
 var clone = require('clone'),
-    express = require('express'),
+    Router = require('router'),
     send = require('send');
 
 
 module.exports = function(options, repo, params, id, reportTiles, reportFont) {
-  var app = express().disable('x-powered-by');
+  var router = new Router();
 
   var styleFile = path.resolve(options.paths.styles, params.style);
 
@@ -62,7 +62,7 @@ module.exports = function(options, repo, params, id, reportTiles, reportFont) {
 
   repo[id] = styleJSON;
 
-  app.get('/' + id + '.json', function(req, res) {
+  router.get('/' + id + '.json', function(req, res) {
     var fixUrl = function(url, opt_nokey) {
       if (!url || (typeof url !== 'string') || url.indexOf('local://') !== 0) {
         return url;
@@ -91,13 +91,15 @@ module.exports = function(options, repo, params, id, reportTiles, reportFont) {
     if (styleJSON_.glyphs) {
       styleJSON_.glyphs = fixUrl(styleJSON_.glyphs, false);
     }
-    return res.send(styleJSON_);
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify(styleJSON_));
   });
 
-  app.get('/' + id + '/sprite:scale(@[23]x)?\.:format([\\w]+)',
+  router.get('/' + id + '/sprite:scale(@[23]x)?\.:format([\\w]+)',
       function(req, res) {
     if (!spritePath) {
-      return res.status(404).send('File not found');
+      res.statusCode = 404;
+      return res.end();
     }
     var scale = req.params.scale,
         format = req.params.format;
@@ -105,5 +107,5 @@ module.exports = function(options, repo, params, id, reportTiles, reportFont) {
     send(req, filename).pipe(res);
   });
 
-  return app;
+  return router;
 };

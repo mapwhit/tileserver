@@ -1,13 +1,13 @@
 'use strict';
 
-var express = require('express'),
+var Router = require('router'),
     fs = require('fs'),
     path = require('path');
 
 var utils = require('./utils');
 
 module.exports = function(options, allowedFonts) {
-  var app = express().disable('x-powered-by');
+  var router = new Router();
 
   var lastModified = new Date().toUTCString();
 
@@ -27,7 +27,7 @@ module.exports = function(options, allowedFonts) {
     });
   });
 
-  app.get('/fonts/:fontstack/:range([\\d]+-[\\d]+).pbf',
+  router.get('/fonts/:fontstack/:range([\\d]+-[\\d]+).pbf',
       function(req, res) {
     var fontstack = decodeURI(req.params.fontstack);
     var range = req.params.range;
@@ -38,21 +38,23 @@ module.exports = function(options, allowedFonts) {
       if (err || concated.length === 0) {
         // console.log(err);
         // console.log(concated.length);
-        return res.status(400).send('');
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'text/plain');
+        return res.end('');
       } else {
-        res.header('Content-type', 'application/x-protobuf');
-        res.header('Last-Modified', lastModified);
-        return res.send(concated);
+        res.setHeader('Content-Type', 'application/x-protobuf');
+        res.setHeader('Last-Modified', lastModified);
+        return res.end(concated);
       }
     });
   });
 
-  app.get('/fonts.json', function(req, res) {
+  router.get('/fonts.json', function(req, res) {
     res.header('Content-type', 'application/json');
     return res.send(
       Object.keys(options.serveAllFonts ? existingFonts : allowedFonts).sort()
     );
   });
 
-  return app;
+  return router;
 };

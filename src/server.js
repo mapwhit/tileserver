@@ -5,11 +5,14 @@ process.env.UV_THREADPOOL_SIZE =
     Math.ceil(Math.max(4, require('os').cpus().length * 1.5));
 
 var fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    querystring = require('querystring');
 
 var clone = require('clone'),
     cors = require('cors'),
-    express = require('express'),
+    connect = require('connect'),
+    parseurl = require('parseurl'),
+    Router = require('router'),
     morgan = require('morgan');
 
 var serve_font = require('./serve_font'),
@@ -20,14 +23,12 @@ var serve_font = require('./serve_font'),
 module.exports = function(opts, callback) {
   console.log('Starting server');
 
-  var app = express().disable('x-powered-by'),
+  var app = connect(),
       serving = {
         styles: {},
         data: {},
         fonts: {}
       };
-
-  app.enable('trust proxy');
 
   callback = callback || function() {};
 
@@ -88,6 +89,12 @@ module.exports = function(opts, callback) {
     });
   }
 
+  app.use(function(req, res, next) {
+    var url = parseurl(req);
+    req.query = querystring.parse(url.query);
+    next();
+  });
+
   Object.keys(config.styles || {}).forEach(function(id) {
     var item = config.styles[id];
     if (!item.style || item.style.length === 0) {
@@ -141,7 +148,9 @@ module.exports = function(opts, callback) {
     app.use('/data/', serve_data(options, serving.data, item, id, serving.styles));
   });
 
-  app.get('/styles.json', function(req, res) {
+  var router = new Router();
+
+  router.get('/styles.json', function(req, res) {
     var result = [];
     var query = req.query.key ? ('?key=' + req.query.key) : '';
     Object.keys(serving.styles).forEach(function(id) {
@@ -154,7 +163,8 @@ module.exports = function(opts, callback) {
              '/styles/' + id + '.json' + query
       });
     });
-    res.json(result);
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(result));
   });
 
   function sendTileJSONs(req, res) {
@@ -167,11 +177,14 @@ module.exports = function(opts, callback) {
       });
       result.push(info);
     });
-    res.json(result);
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(result));
   }
 
-  app.get('/index.json', sendTileJSONs);
-  app.get('/data.json', sendTileJSONs);
+  router.get('/index.json', sendTileJSONs);
+  router.get('/data.json', sendTileJSONs);
+
+  app.use(router);
 
   var server = app.listen(process.env.PORT || opts.port, process.env.BIND || opts.bind, function() {
     console.log('Listening at http://%s:%d/',
