@@ -6,7 +6,7 @@ var fs = require('fs'),
 
 var clone = require('clone'),
     express = require('express'),
-    mbtiles = require('mbtiles');
+    mbtiles = require('@mapbox/mbtiles');
 
 var utils = require('./utils');
 
