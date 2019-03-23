@@ -18,21 +18,21 @@
   "dependencies": {
     "@mapbox/mbtiles": "^0.11.0",
     "async": "~2",
-    "clone": "2.1.1",
+    "clone": "2.1.2",
     "connect": "^3.6.6",
-    "cors": "2.8.2",
+    "cors": "2.8.5",
     "glyph-pbf-composite": "0.0.2",
-    "morgan": "1.8.1",
-    "ms": "^1.0.0",
+    "morgan": "1.9.1",
+    "ms": "^2.1.1",
     "nomnom": "1.8.1",
     "router": "^1.3.3",
     "send": "~0"
   },
   "devDependencies": {
     "jshint": "^2.9.4",
-    "mocha": "^3.2.0",
-    "should": "^11.2.0",
-    "supertest": "^3.0.0"
+    "mocha": "^6.0.2",
+    "should": "^13.2.3",
+    "supertest": "^4.0.2"
   },
   "files": [
     "src"
