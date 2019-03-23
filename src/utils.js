@@ -110,7 +110,7 @@ module.exports.getFontsPbf = function(allowedFonts, fontPath, names, range, fall
 
   return async.parallel(queue, function(err, results) {
     if (err) {
-      callback(err, new Buffer([]));
+      callback(err, Buffer.alloc(0));
     } else {
       callback(err, glyphCompose.combine(results));
     }
