@@ -13,8 +13,7 @@ var clone = require('clone'),
     parseurl = require('parseurl'),
     Router = require('router');
 
-var serve_font = require('./serve_font'),
-    serve_style = require('./serve_style'),
+var serve_style = require('./serve_style'),
     serve_data = require('./serve_data'),
     utils = require('./utils');
 
@@ -24,8 +23,8 @@ module.exports = function(opts, callback) {
   var app = connect(),
       serving = {
         styles: {},
-        data: {},
-        fonts: {}
+        fonts: {},
+        data: {}
       };
 
   callback = callback || function() {};
@@ -54,7 +53,6 @@ module.exports = function(opts, callback) {
     configPath ? path.dirname(configPath) : process.cwd(),
     paths.root || '');
   paths.styles = path.resolve(paths.root, paths.styles || '');
-  paths.fonts = path.resolve(paths.root, paths.fonts || '');
   paths.sprites = path.resolve(paths.root, paths.sprites || '');
   paths.mbtiles = path.resolve(paths.root, paths.mbtiles || '');
 
@@ -65,7 +63,6 @@ module.exports = function(opts, callback) {
     }
   };
   checkPath('styles');
-  checkPath('fonts');
   checkPath('sprites');
   checkPath('mbtiles');
 
@@ -124,8 +121,6 @@ module.exports = function(opts, callback) {
         }));
     }
   });
-
-  app.use('/', serve_font(options, serving.fonts));
 
   Object.keys(data).forEach(function(id) {
     var item = data[id];

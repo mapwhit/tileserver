@@ -1,12 +1,5 @@
 'use strict';
 
-var async = require('async'),
-    path = require('path'),
-    fs = require('fs');
-
-var clone = require('clone'),
-    glyphCompose = require('glyph-pbf-composite');
-
 module.exports.getTileUrls = function(req, domains, path, format, aliases) {
 
   if (domains) {
@@ -70,49 +63,4 @@ module.exports.fixTileJSONCenter = function(tileJSON) {
       )
     ];
   }
-};
-
-module.exports.getFontsPbf = function(allowedFonts, fontPath, names, range, fallbacks, callback) {
-  var getFontPbf = function(allowedFonts, name, range, callback, fallbacks) {
-    if (!allowedFonts || (allowedFonts[name] && fallbacks)) {
-      var filename = path.join(fontPath, name, range + '.pbf');
-      if (!fallbacks) {
-        fallbacks = clone(allowedFonts || {});
-      }
-      delete fallbacks[name];
-      return fs.readFile(filename, function(err, data) {
-        if (err) {
-          console.error('ERROR: Font not found:', name);
-          if (fallbacks && Object.keys(fallbacks).length) {
-            var fallbackName = Object.keys(fallbacks)[0];
-            console.error('ERROR: Trying to use', fallbackName, 'as a fallback');
-            delete fallbacks[fallbackName];
-            return getFontPbf(null, fallbackName, range, callback, fallbacks);
-          } else {
-            return callback(new Error('Font load error: ' + name));
-          }
-        } else {
-          return callback(null, data);
-        }
-      });
-    } else {
-      return callback(new Error('Font not allowed: ' + name));
-    }
-  };
-
-  var fonts = names.split(',');
-  var queue = [];
-  fonts.forEach(function(font) {
-    queue.push(function(callback) {
-      getFontPbf(allowedFonts, font, range, callback, clone(allowedFonts || fallbacks));
-    });
-  });
-
-  return async.parallel(queue, function(err, results) {
-    if (err) {
-      callback(err, Buffer.alloc(0));
-    } else {
-      callback(err, glyphCompose.combine(results));
-    }
-  });
 };

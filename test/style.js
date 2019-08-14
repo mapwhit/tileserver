@@ -38,14 +38,3 @@ describe('Styles', function() {
     testIs('/styles/' + prefix + '/sprite@2x.png', /image\/png/);
   });
 });
-
-describe('Fonts', function() {
-  testIs('/fonts/Open Sans Bold/0-255.pbf', /application\/x-protobuf/);
-  testIs('/fonts/Open Sans Regular/65280-65535.pbf', /application\/x-protobuf/);
-  testIs('/fonts/Open Sans Bold,Open Sans Regular/0-255.pbf',
-         /application\/x-protobuf/);
-  testIs('/fonts/Nonsense,Open Sans Bold/0-255.pbf', /./, 400);
-
-  testIs('/fonts/Nonsense/0-255.pbf', /./, 400);
-  testIs('/fonts/Nonsense1,Nonsense2/0-255.pbf', /./, 400);
-});
