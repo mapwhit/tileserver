@@ -12,8 +12,7 @@ var clone = require('clone'),
     cors = require('cors'),
     connect = require('connect'),
     parseurl = require('parseurl'),
-    Router = require('router'),
-    morgan = require('morgan');
+    Router = require('router');
 
 var serve_font = require('./serve_font'),
     serve_style = require('./serve_style'),
@@ -31,12 +30,6 @@ module.exports = function(opts, callback) {
       };
 
   callback = callback || function() {};
-
-  if (process.env.NODE_ENV == 'production') {
-    app.use(morgan('tiny'));
-  } else if (process.env.NODE_ENV !== 'test') {
-    app.use(morgan('dev'));
-  }
 
   var config = opts.config || null;
   var configPath = null;
