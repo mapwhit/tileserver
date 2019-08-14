@@ -9,7 +9,6 @@ var fs = require('fs'),
     querystring = require('querystring');
 
 var clone = require('clone'),
-    cors = require('cors'),
     connect = require('connect'),
     parseurl = require('parseurl'),
     Router = require('router');
@@ -72,9 +71,6 @@ module.exports = function(opts, callback) {
 
   var data = clone(config.data || {});
 
-  if (opts.cors) {
-    app.use(cors());
-  }
   if (opts.cacheControl) {
     app.use(function(req, res, next) {
       req.cacheControl = opts.cacheControl;

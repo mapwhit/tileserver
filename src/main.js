@@ -27,10 +27,6 @@ var opts = require('nomnom')
     default: 8080,
     help: 'Port'
   })
-  .option('cors', {
-    default: true,
-    help: 'Enable Cross-origin resource sharing headers'
-  })
   .option('max-age', {
     help: 'Configue max-age for Cache-Control header: "5d", "3h", "1y" etc.'
   })
@@ -62,7 +58,6 @@ function startServer(configPath) {
     configPath: configPath,
     bind: opts.bind,
     port: opts.port,
-    cors: opts.cors,
     maxAge: maxAge,
     cacheControl: cacheControl
   });
