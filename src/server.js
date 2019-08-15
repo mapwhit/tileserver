@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const querystring = require('querystring');
 const clone = require('clone');
-const connect = require('connect');
+const connect = require('@pirxpilot/connect');
 const parseurl = require('parseurl');
 const Router = require('router');
 
