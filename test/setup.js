@@ -6,12 +6,15 @@ global.supertest = require('supertest');
 before(function() {
   console.log('global setup');
   process.chdir('test_data');
-  var running = require('../src/server')({
+  const {
+    app,
+    server
+  } = require('../src/server')({
     configPath: 'config.json',
     port: 8888
   });
-  global.app = running.app;
-  global.server = running.server;
+  global.app = app;
+  global.server = server;
 });
 
 after(function() {

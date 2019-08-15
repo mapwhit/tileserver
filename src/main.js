@@ -1,14 +1,11 @@
 #!/usr/bin/env node
 
-'use strict';
+const path = require('path');
+const ms = require('ms');
 
-var path = require('path');
+const packageJson = require('../package');
 
-var ms = require('ms');
-
-var packageJson = require('../package');
-
-var opts = require('nomnom')
+const opts = require('nomnom')
   .option('mbtiles', {
     help: 'MBTiles file - ignored if the configuration file is also specified',
     position: 0
@@ -39,27 +36,27 @@ var opts = require('nomnom')
     abbr: 'v',
     flag: true,
     help: 'Version info',
-    callback: function() {
-      return packageJson.name + ' v' + packageJson.version;
+    callback() {
+      return `${packageJson.name} v${packageJson.version}`;
     }
   }).parse();
 
 
-console.log('Starting ' + packageJson.name + ' v' + packageJson.version);
+console.log(`Starting ${packageJson.name} v${packageJson.version}`);
 
 function startServer(configPath) {
-  var maxAge = opts['max-age'];
-  var cacheControl;
+  const maxAge = opts['max-age'];
+  let cacheControl;
 
   if (maxAge) {
-    cacheControl = 'public, max-age=' + Math.floor(ms(maxAge) / 1000);
+    cacheControl = `public, max-age=${Math.floor(ms(maxAge) / 1000)}`;
   }
   return require('./server')({
-    configPath: configPath,
+    configPath,
     bind: opts.bind,
     port: opts.port,
-    maxAge: maxAge,
-    cacheControl: cacheControl
+    maxAge,
+    cacheControl
   });
 }
 

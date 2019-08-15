@@ -1,14 +1,11 @@
-'use strict';
+const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
+const clone = require('clone');
+const Router = require('router');
+const mbtiles = require('@mapbox/mbtiles');
 
-var fs = require('fs'),
-    path = require('path'),
-    zlib = require('zlib');
-
-var clone = require('clone'),
-    Router = require('router'),
-    mbtiles = require('@mapbox/mbtiles');
-
-var utils = require('./utils');
+const { fixTileJSONCenter, getTileUrls } = require('./utils');
 
 function isGzipped(data) {
   return data[0] === 0x1f && data[1] === 0x8b;
@@ -28,9 +25,9 @@ function zip(tile, fn) {
 }
 
 function initZoomRanges(min, max) {
-  var ranges = [];
-  var value = Math.pow(2, min);
-  var i;
+  const ranges = [];
+  let value = Math.pow(2, min);
+  let i;
 
   for (i = min; i <= max; i++) {
     ranges[i] = value;
@@ -40,22 +37,24 @@ function initZoomRanges(min, max) {
   return ranges;
 }
 
-module.exports = function(options, repo, params, id) {
-  var router = new Router();
+module.exports = serveData;
 
-  var mbtilesFile = path.resolve(options.paths.mbtiles, params.mbtiles);
-  var tileJSON = {
+function serveData(options, repo, params, id) {
+  const router = new Router();
+
+  const mbtilesFile = path.resolve(options.paths.mbtiles, params.mbtiles);
+  const tileJSON = {
     'tiles': params.domains || options.domains
   };
-  var zoomRanges;
+  let zoomRanges;
 
   repo[id] = tileJSON;
 
-  var mbtilesFileStats = fs.statSync(mbtilesFile);
+  const mbtilesFileStats = fs.statSync(mbtilesFile);
   if (!mbtilesFileStats.isFile() || mbtilesFileStats.size === 0) {
-    throw Error('Not valid MBTiles file: ' + mbtilesFile);
+    throw Error(`Not valid MBTiles file: ${mbtilesFile}`);
   }
-  var source = new mbtiles(mbtilesFile, function() {
+  const source = new mbtiles(mbtilesFile, function() {
     source.getInfo(function(err, info) {
       tileJSON['name'] = id;
       tileJSON['format'] = 'pbf';
@@ -68,18 +67,18 @@ module.exports = function(options, repo, params, id) {
       delete tileJSON['scheme'];
 
       Object.assign(tileJSON, params.tilejson || {});
-      utils.fixTileJSONCenter(tileJSON);
+      fixTileJSONCenter(tileJSON);
 
       zoomRanges = initZoomRanges(tileJSON.minzoom, tileJSON.maxzoom);
     });
   });
 
-  var tilePattern = '/' + id + '/:z(\\d+)/:x(\\d+)/:y(\\d+).pbf';
+  const tilePattern = `/${id}/:z(\\d+)/:x(\\d+)/:y(\\d+).pbf`;
 
   function checkParams(req, res, next) {
-    var z = req.params.z | 0,
-        x = req.params.x | 0,
-        y = req.params.y | 0;
+    const z = req.params.z | 0;
+    const x = req.params.x | 0;
+    const y = req.params.y | 0;
 
     if (z < tileJSON.minzoom || z > tileJSON.maxzoom
         || x < 0 || x >= zoomRanges[z]
@@ -95,10 +94,10 @@ module.exports = function(options, repo, params, id) {
   }
 
   function getTile(req, res, next) {
-    var p = req.params;
-    source.getTile(p.z, p.x, p.y, function(err, data, headers) {
+    const { z, x, y } = req.params;
+    source.getTile(z, x, y, function(err, data, headers) {
       if (err) {
-        var status = /does not exist/.test(err.message) ? 404 : 500;
+        const status = /does not exist/.test(err.message) ? 404 : 500;
         res.statusCode = status;
         return res.end(err.message);
       }
@@ -106,8 +105,8 @@ module.exports = function(options, repo, params, id) {
         return res.status(404).send('Not found');
       }
       req.tile = {
-        data: data,
-        headers: headers,
+        data,
+        headers,
         contentType: 'application/x-protobuf',
         isGzipped: isGzipped(data)
       };
@@ -120,7 +119,7 @@ module.exports = function(options, repo, params, id) {
   }
 
   function sendTile(req, res) {
-    var headers = req.tile.headers;
+    const headers = req.tile.headers;
 
     delete headers['ETag']; // do not trust the tile ETag -- regenerate
     headers['Content-Type'] = req.tile.contentType;
@@ -143,15 +142,12 @@ module.exports = function(options, repo, params, id) {
     sendTile
   );
 
-  router.get('/' + id + '.json', function(req, res) {
-    var info = clone(tileJSON);
-    info.tiles = utils.getTileUrls(req, info.tiles,
-                                   'data/' + id, info.format, {
-                                     'pbf': options.pbfAlias
-                                   });
+  router.get(`/${id}.json`, function(req, res) {
+    const info = clone(tileJSON);
+    info.tiles = getTileUrls(req, info.tiles, `data/${id}`, info.format, { pbf: options.pbfAlias });
     res.setHeader('Content-Type', 'application/json');
     return res.end(JSON.stringify(info));
   });
 
   return router;
-};
+}

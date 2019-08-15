@@ -1,5 +1,5 @@
-var testTileJSONArray = function(url) {
-  describe(url + ' is array of TileJSONs', function() {
+function testTileJSONArray(url) {
+  describe(`${url} is array of TileJSONs`, function() {
     it('is json', function(done) {
       supertest(app)
         .get(url)
@@ -16,10 +16,10 @@ var testTileJSONArray = function(url) {
         }).end(done);
     });
   });
-};
+}
 
-var testTileJSON = function(url) {
-  describe(url + ' is TileJSON', function() {
+function testTileJSON(url) {
+  describe(`${url} is TileJSON`, function() {
     it('is json', function(done) {
       supertest(app)
         .get(url)
@@ -35,7 +35,7 @@ var testTileJSON = function(url) {
         }).end(done);
     });
   });
-};
+}
 
 describe('Metadata', function() {
   testTileJSONArray('/index.json');

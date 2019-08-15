@@ -1,11 +1,11 @@
 function url(prefix, z, x, y) {
-  return '/data/' + prefix + '/' + z + '/' + x + '/' + y + '.pbf';
+  return `/data/${prefix}/${z}/${x}/${y}.pbf`;
 }
 
 function testTile(prefix, z, x, y, status) {
-  var path = url(prefix, z, x, y);
-  it(path + ' returns ' + status, function(done) {
-    var test = supertest(app).get(path);
+  const path = url(prefix, z, x, y);
+  it(`${path} returns ${status}`, function(done) {
+    const test = supertest(app).get(path);
     if (status) test.expect(status);
     if (status == 200) test.expect('Content-Type', /application\/x-protobuf/);
     test.end(done);
@@ -23,7 +23,7 @@ function binaryParser(res, callback) {
   });
 }
 
-var prefix = 'openmaptiles';
+const prefix = 'openmaptiles';
 
 describe('Vector tiles', function() {
   describe('existing tiles', function() {
@@ -32,7 +32,7 @@ describe('Vector tiles', function() {
 
     it('should retrieve a specific tile', function(done) {
       // curl --compress https://localhost:8080/data/openmaptiles/5/0/0.pbf > test/fixtures/5-0-0.pbf
-      var body = require('fs').readFileSync(__dirname + '/fixtures/5-0-0.pbf');
+      const body = require('fs').readFileSync(`${__dirname}/fixtures/5-0-0.pbf`);
 
       supertest(app)
         .get(url(prefix, 5, 0, 0))
