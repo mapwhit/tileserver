@@ -41,26 +41,5 @@ describe('Metadata', function() {
   testTileJSONArray('/index.json');
   testTileJSONArray('/data.json');
 
-  describe('/styles.json is valid array', function() {
-    it('is json', function(done) {
-      supertest(app)
-        .get('/styles.json')
-        .expect(200)
-        .expect('Content-Type', /application\/json/, done);
-    });
-
-    it('contains valid item', function(done) {
-      supertest(app)
-        .get('/styles.json')
-        .expect(function(res) {
-          res.body.should.be.Array();
-          res.body.length.should.be.greaterThan(0);
-          res.body[0].version.should.equal(8);
-          res.body[0].id.should.be.String();
-          res.body[0].name.should.be.String();
-        }).end(done);
-    });
-  });
-
   testTileJSON('/data/openmaptiles.json');
 });

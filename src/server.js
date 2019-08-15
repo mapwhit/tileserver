@@ -13,8 +13,7 @@ var clone = require('clone'),
     parseurl = require('parseurl'),
     Router = require('router');
 
-var serve_style = require('./serve_style'),
-    serve_data = require('./serve_data'),
+var serve_data = require('./serve_data'),
     utils = require('./utils');
 
 module.exports = function(opts, callback) {
@@ -22,8 +21,6 @@ module.exports = function(opts, callback) {
 
   var app = connect(),
       serving = {
-        styles: {},
-        fonts: {},
         data: {}
       };
 
@@ -52,8 +49,6 @@ module.exports = function(opts, callback) {
   paths.root = path.resolve(
     configPath ? path.dirname(configPath) : process.cwd(),
     paths.root || '');
-  paths.styles = path.resolve(paths.root, paths.styles || '');
-  paths.sprites = path.resolve(paths.root, paths.sprites || '');
   paths.mbtiles = path.resolve(paths.root, paths.mbtiles || '');
 
   var checkPath = function(type) {
@@ -62,8 +57,6 @@ module.exports = function(opts, callback) {
       process.exit(1);
     }
   };
-  checkPath('styles');
-  checkPath('sprites');
   checkPath('mbtiles');
 
   var data = clone(config.data || {});
@@ -81,47 +74,6 @@ module.exports = function(opts, callback) {
     next();
   });
 
-  Object.keys(config.styles || {}).forEach(function(id) {
-    var item = config.styles[id];
-    if (!item.style || item.style.length === 0) {
-      console.log('Missing "style" property for ' + id);
-      return;
-    }
-
-    if (item.serve_data !== false) {
-      app.use('/styles/', serve_style(options, serving.styles, item, id,
-        function(mbtiles, fromData) {
-          var dataItemId;
-          Object.keys(data).forEach(function(id) {
-            if (fromData) {
-              if (id == mbtiles) {
-                dataItemId = id;
-              }
-            } else {
-              if (data[id].mbtiles == mbtiles) {
-                dataItemId = id;
-              }
-            }
-          });
-          if (dataItemId) { // mbtiles exist in the data config
-            return dataItemId;
-          } else if (fromData) {
-            console.log('ERROR: data "' + mbtiles + '" not found!');
-            process.exit(1);
-          } else {
-            var id = mbtiles.substr(0, mbtiles.lastIndexOf('.')) || mbtiles;
-            while (data[id]) id += '_';
-            data[id] = {
-              'mbtiles': mbtiles
-            };
-            return id;
-          }
-        }, function(font) {
-          serving.fonts[font] = true;
-        }));
-    }
-  });
-
   Object.keys(data).forEach(function(id) {
     var item = data[id];
     if (!item.mbtiles || item.mbtiles.length === 0) {
@@ -129,27 +81,10 @@ module.exports = function(opts, callback) {
       return;
     }
 
-    app.use('/data/', serve_data(options, serving.data, item, id, serving.styles));
+    app.use('/data/', serve_data(options, serving.data, item, id));
   });
 
   var router = new Router();
-
-  router.get('/styles.json', function(req, res) {
-    var result = [];
-    var query = req.query.key ? ('?key=' + req.query.key) : '';
-    Object.keys(serving.styles).forEach(function(id) {
-      var styleJSON = serving.styles[id];
-      result.push({
-        version: styleJSON.version,
-        name: styleJSON.name,
-        id: id,
-        url: req.protocol + '://' + req.headers.host +
-             '/styles/' + id + '.json' + query
-      });
-    });
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(result));
-  });
 
   function sendTileJSONs(req, res) {
     var result = [];
