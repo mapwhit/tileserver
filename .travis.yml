@@ -2,7 +2,3 @@ language: node_js
 node_js:
   - node
   - lts/*
-install:
-  - yarn
-  - wget -O test_data.zip https://github.com/klokantech/tileserver-gl/releases/download/v1.3.0/test_data.zip
-  - unzip -q test_data.zip -d test_data
