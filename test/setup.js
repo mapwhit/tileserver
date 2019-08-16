@@ -9,7 +9,7 @@ before(function() {
   const {
     app,
     server
-  } = require('../src/server')({
+  } = require('../lib/server')({
     configPath: 'config.json',
     port: 8888
   });

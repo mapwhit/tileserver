@@ -1,7 +1,7 @@
 check: lint test
 
 lint:
-	./node_modules/.bin/jshint src test
+	./node_modules/.bin/jshint lib test
 
 test: test_data
 	./node_modules/.bin/mocha --recursive
