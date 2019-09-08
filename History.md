@@ -1,4 +1,18 @@
 
+3.0.0 / 2019-09-08
+==================
+
+ * reorganize option parsing
+ * use @pirxpilot/connect fork
+ * rewrite in ES8
+ * simplify getTileUrls
+ * remove serving styles functionality
+ * remove serving fonts functionality
+ * remove CORS support
+ * remove morgan
+ * simplify testing config
+ * update dependencies
+
 2.0.0 / 2017-04-16
 ==================
 
