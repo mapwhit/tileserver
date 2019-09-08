@@ -9,5 +9,6 @@
   "globals": {
     "supertest": false,
     "app": false
-  }
+  },
+  "esversion": 8
 }

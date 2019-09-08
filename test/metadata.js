@@ -1,5 +1,5 @@
-var testTileJSONArray = function(url) {
-  describe(url + ' is array of TileJSONs', function() {
+function testTileJSONArray(url) {
+  describe(`${url} is array of TileJSONs`, function() {
     it('is json', function(done) {
       supertest(app)
         .get(url)
@@ -16,10 +16,10 @@ var testTileJSONArray = function(url) {
         }).end(done);
     });
   });
-};
+}
 
-var testTileJSON = function(url) {
-  describe(url + ' is TileJSON', function() {
+function testTileJSON(url) {
+  describe(`${url} is TileJSON`, function() {
     it('is json', function(done) {
       supertest(app)
         .get(url)
@@ -35,32 +35,11 @@ var testTileJSON = function(url) {
         }).end(done);
     });
   });
-};
+}
 
 describe('Metadata', function() {
   testTileJSONArray('/index.json');
   testTileJSONArray('/data.json');
-
-  describe('/styles.json is valid array', function() {
-    it('is json', function(done) {
-      supertest(app)
-        .get('/styles.json')
-        .expect(200)
-        .expect('Content-Type', /application\/json/, done);
-    });
-
-    it('contains valid item', function(done) {
-      supertest(app)
-        .get('/styles.json')
-        .expect(function(res) {
-          res.body.should.be.Array();
-          res.body.length.should.be.greaterThan(0);
-          res.body[0].version.should.equal(8);
-          res.body[0].id.should.be.String();
-          res.body[0].name.should.be.String();
-        }).end(done);
-    });
-  });
 
   testTileJSON('/data/openmaptiles.json');
 });
