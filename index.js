@@ -1,32 +1,30 @@
 const ms = require('ms');
-const commander = require('commander');
+const config = require('rc')('tiles', {
+  port: process.env.PORT || 5080,
+  bind: process.env.BIND,
+  // max-age: // 'max-age for Cache-Control header: "5d", "3h", "1y" etc.'
+});
 
 const { name, version } = require('./package.json');
 const makeServer = require('./lib/server');
 
-const opts = commander
-  .version(version)
-  .option('-c, --config <path>', 'config file path', 'config.json')
-  .option('-b, --bind <address>', 'bind IP address', process.env.BIND)
-  .option('-p, --port <port>', 'port', process.env.PORT || 5080)
-  .option('--max-age <millis>', 'max-age for Cache-Control header: "5d", "3h", "1y" etc.', parseMillis)
-  .action(startServer);
-
-opts.parse(process.argv);
-
 function startServer() {
 
+  config.cacheControl = cacheControl(config['max-age']);
+
   console.log(`Starting ${name} v${version}`);
-  console.log(opts.bind, opts.port, opts.maxAge, opts.config);
+  console.log(`Port ${config.port} on ${config.bind}`);
 
-  return makeServer({
-    configPath: opts.config,
-    bind: opts.bind,
-    port: opts.port,
-    cacheControl: opts.maxAge ? `public, max-age=${opts.maxAge}` : false
-  });
+  return makeServer(config);
 }
 
-function parseMillis(str) {
-  return Math.floor(ms(str) / 1000);
+function cacheControl(maxAgeMillis) {
+  if (!maxAgeMillis) {
+    return false;
+  }
+  const maxAge = Math.floor(ms(maxAgeMillis) / 1000);
+  return `public, max-age=${maxAge}`;
 }
+
+
+startServer();
