@@ -1,46 +1,74 @@
-![tileserver-gl](https://cloud.githubusercontent.com/assets/59284/18173467/fa3aa2ca-7069-11e6-86b1-0f1266befeb6.jpeg)
+[![NPM version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Dependency Status][deps-image]][deps-url]
+[![Dev Dependency Status][deps-dev-image]][deps-dev-url]
 
+# TileServer GL Tiny
 
-# TileServer GL
-[![Build Status](https://travis-ci.org/klokantech/tileserver-gl.svg?branch=master)](https://travis-ci.org/klokantech/tileserver-gl)
-[![Docker Hub](https://img.shields.io/badge/docker-hub-blue.svg)](https://hub.docker.com/r/klokantech/tileserver-gl/)
+This is a slimmed down clone of the [tileserver-gl] package.
+It's intended to be used as a standalone server for tiles in [mbtiles] format.
 
-Vector and raster maps with GL styles. Server side rendering by Mapbox GL Native. Map tile server for Mapbox GL JS, Android, iOS, Leaflet, OpenLayers, GIS via WMTS, etc.
+The following features of the original are not supported:
 
-## Get Started
+- server side rasterization
+- font server - if needed use [map-glyph-server]
+- CORS support - if needed use behind NGINX or alternative
 
-Install `tileserver-gl` with server-side raster rendering of vector tiles with npm
+## Installation
 
-```bash
-npm install -g tileserver-gl
+```sh
+npm install -g @pirxpilot/tileserver-gl-tiny
 ```
 
-Now download vector tiles from [OpenMapTiles](https://openmaptiles.org/downloads/).
 
-```bash
-curl -o zurich_switzerland.mbtiles https://openmaptiles.os.zhdk.cloud.switch.ch/v3.3/extracts/zurich_switzerland.mbtiles
+You will also need [mbtiles]
+
+## Usage
+
+```sh
+tileserver-gl-tiny --config path/to/config/file
 ```
 
-Start `tileserver-gl` with the downloaded vector tiles.
+Config file can be in `.json` or `yaml`. If config file name is not specified
+`tilesrc` config file is located according to the rules describe in the [rc] project.
 
-```bash
-tileserver-gl zurich_switzerland.mbtiles
+Config file example:
+
+```ini
+port = 5080
+max-age = 10d
+
+[options.paths]
+
+; this is where .mbtiles files are located
+root = /var/lib/tiles
+
+[data.v3]
+
+mbtiles = planet.mbtiles
+
+; add more [data.xxx] section to serve additional .mbtiles
 ```
-
-Alternatively, you can use the `tileserver-gl-light` package instead, which is pure javascript (does not have any native dependencies) and can run anywhere, but does not contain rasterization on the server side made with MapBox GL Native.
-
-## Using Docker
-
-An alternative to npm to start the packed software easier is to install [Docker](http://www.docker.com/) on your computer and then run in the directory with the downloaded MBTiles the command:
-
-```bash
-docker run -it -v $(pwd):/data -p 8080:80 klokantech/tileserver-gl
-```
-
-This will download and start a ready to use container on your computer and the maps are going to be available in webbrowser on localhost:8080.
-
-On laptop you can use [Docker Kitematic](https://kitematic.com/) and search "tileserver-gl" and run it, then drop in the 'data' folder the MBTiles.
 
 ## Documentation
 
-You can read full documentation of this project at http://tileserver.readthedocs.io/.
+Most of the [tileserver-gl documentation] is relevant - specifically parts related to conig format.
+
+
+[mbtiles]: https://wiki.openstreetmap.org/wiki/MBTiles
+[tileserver-gl]: https://www.npmjs.com/package/tileserver-gl
+[rc]: https://www.npmjs.com/package/rc
+[tileserver-gl documentation]: http://tileserver.readthedocs.io
+[map-glyph-server]: https://github.com/furkot/map-glyph-server
+
+[npm-image]: https://img.shields.io/npm/v/@pirxpilot/tileserver-gl-tiny.svg
+[npm-url]: https://npmjs.org/package/@pirxpilot/tileserver-gl-tiny
+
+[travis-image]: https://img.shields.io/travis/com/pirxpilot/tileserver-gl.svg
+[travis-url]: https://travis-ci.com/pirxpilot/tileserver-gl
+
+[deps-image]: https://img.shields.io/david/pirxpilot/tileserver-gl.svg
+[deps-url]: https://david-dm.org/pirxpilot/tileserver-gl
+
+[deps-dev-image]: https://img.shields.io/david/dev/pirxpilot/tileserver-gl.svg
+[deps-dev-url]: https://david-dm.org/pirxpilot/tileserver-gl?type=dev
