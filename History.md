@@ -1,4 +1,12 @@
 
+3.1.0 / 2020-07-09
+==================
+
+ * update dependencies
+ * update documentation
+ * simplify config parsing
+ * replace commander with rc
+
 3.0.0 / 2019-09-08
 ==================
 
