@@ -15,7 +15,7 @@
     "test": "make check"
   },
   "dependencies": {
-    "@mapbox/mbtiles": "~0.12",
+    "@mapbox/mbtiles": "~0.12.1",
     "@pirxpilot/connect": "~4",
     "ms": "~2",
     "rc": "~1",
@@ -23,9 +23,9 @@
   },
   "devDependencies": {
     "jshint": "~2",
-    "mocha": "~8",
+    "mocha": "~9",
     "should": "~13",
-    "supertest": "~4"
+    "supertest": "~6"
   },
   "files": [
     "index.js",
