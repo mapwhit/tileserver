@@ -15,7 +15,7 @@
     "test": "make check"
   },
   "dependencies": {
-    "@mapbox/mbtiles": "~0.12.1",
+    "@mapwhit/mbtiles": "^1.0.0",
     "@pirxpilot/connect": "~4",
     "ms": "~2",
     "rc": "~1",
