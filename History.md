@@ -1,4 +1,11 @@
 
+3.2.0 / 2021-07-14
+==================
+
+ * use @mapwhit/mbtiles
+ * updgrade deps
+ * remove unused `README_light`
+
 3.1.0 / 2020-07-09
 ==================
 
