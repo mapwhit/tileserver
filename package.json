@@ -6,10 +6,7 @@
   "authors": [
     "Petr Sloup <petr.sloup@klokantech.com>"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/pirxpilot/tileserver-gl.git"
-  },
+  "repository": "pirxpilot/tileserver-gl",
   "license": "BSD-2-Clause",
   "scripts": {
     "test": "make check"

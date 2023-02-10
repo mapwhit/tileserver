@@ -1,7 +1,6 @@
 [![NPM version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
+[![Build Status][build-image]][build-url]
 [![Dependency Status][deps-image]][deps-url]
-[![Dev Dependency Status][deps-dev-image]][deps-dev-url]
 
 # TileServer GL Tiny
 
@@ -61,14 +60,12 @@ Most of the [tileserver-gl documentation] is relevant - specifically parts relat
 [tileserver-gl documentation]: http://tileserver.readthedocs.io
 [map-glyph-server]: https://github.com/furkot/map-glyph-server
 
-[npm-image]: https://img.shields.io/npm/v/@pirxpilot/tileserver-gl-tiny.svg
+[npm-image]: https://img.shields.io/npm/v/@pirxpilot/tileserver-gl-tiny
 [npm-url]: https://npmjs.org/package/@pirxpilot/tileserver-gl-tiny
 
-[travis-image]: https://img.shields.io/travis/com/pirxpilot/tileserver-gl.svg
-[travis-url]: https://travis-ci.com/pirxpilot/tileserver-gl
+[build-image]: https://img.shields.io/github/actions/workflow/status/pirxpilot/tileserver-gl/check.yaml?branch=main
+[build-url]: https://github.com/pirxpilot/tileserver-gl/actions/workflows/check.yaml
 
-[deps-image]: https://img.shields.io/david/pirxpilot/tileserver-gl.svg
-[deps-url]: https://david-dm.org/pirxpilot/tileserver-gl
+[deps-image]: https://img.shields.io/librariesio/release/npm/@pirxpilot/tileserver-gl-tiny
+[deps-url]: https://libraries.io/npm/@pirxpilot%2Ftileserver-gl-tiny
 
-[deps-dev-image]: https://img.shields.io/david/dev/pirxpilot/tileserver-gl.svg
-[deps-dev-url]: https://david-dm.org/pirxpilot/tileserver-gl?type=dev
