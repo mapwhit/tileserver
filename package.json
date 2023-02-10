@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "jshint": "~2",
-    "mocha": "~9",
+    "mocha": "~10",
     "should": "~13",
     "supertest": "~6"
   },
