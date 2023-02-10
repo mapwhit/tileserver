@@ -1,4 +1,12 @@
 
+3.2.1 / 2023-02-10
+==================
+
+ * replace Travis CI with github actions
+ * upgrade mocha to ~10
+ * soft dependency update
+ * upgrade @mapwhit/mbtiles
+
 3.2.0 / 2021-07-14
 ==================
 
