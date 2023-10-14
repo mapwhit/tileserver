@@ -1,4 +1,10 @@
 
+3.2.2 / 2023-10-14
+==================
+
+ * upgrade @mapwhit/mbtiles to 1.1.0
+ * replace mocha with native test runner
+
 3.2.1 / 2023-02-10
 ==================
 
