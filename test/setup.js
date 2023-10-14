@@ -1,3 +1,5 @@
+const { before, after } = require('node:test');
+
 process.env.NODE_ENV = 'test';
 
 global.should = require('should');

@@ -19,8 +19,7 @@
     "router": "~1"
   },
   "devDependencies": {
-    "jshint": "~2",
-    "mocha": "~10",
+    "@pirxpilot/jshint": "^3.0.1",
     "should": "~13",
     "supertest": "~6"
   },
