@@ -1,10 +1,14 @@
+const { describe, it } = require('node:test');
+
+require('./setup');
+
 function url(prefix, z, x, y) {
   return `/data/${prefix}/${z}/${x}/${y}.pbf`;
 }
 
 function testTile(prefix, z, x, y, status) {
   const path = url(prefix, z, x, y);
-  it(`${path} returns ${status}`, function(done) {
+  it(`${path} returns ${status}`, function (t, done) {
     const test = supertest(app).get(path);
     if (status) test.expect(status);
     if (status == 200) test.expect('Content-Type', /application\/x-protobuf/);
@@ -25,12 +29,12 @@ function binaryParser(res, callback) {
 
 const prefix = 'openmaptiles';
 
-describe('Vector tiles', function() {
-  describe('existing tiles', function() {
+describe('Vector tiles', function () {
+  describe('existing tiles', function () {
     testTile(prefix, 0, 0, 0, 200);
     testTile(prefix, 14, 8581, 5738, 200);
 
-    it('should retrieve a specific tile', function(done) {
+    it('should retrieve a specific tile', function (t, done) {
       // curl --compress https://localhost:8080/data/openmaptiles/5/0/0.pbf > test/fixtures/5-0-0.pbf
       const body = require('fs').readFileSync(`${__dirname}/fixtures/5-0-0.pbf`);
 
@@ -42,14 +46,14 @@ describe('Vector tiles', function() {
         .expect('Content-Encoding', 'gzip')
         .buffer()
         .parse(binaryParser)
-        .end(function(err, res) {
+        .end(function (err, res) {
           res.body.should.eql(body);
           done(err);
         });
     });
   });
 
-  describe('non-existent requests return 4xx', function() {
+  describe('non-existent requests return 4xx', function () {
     testTile('non_existent', 0, 0, 0, 404);
     testTile(prefix, -1, 0, 0, 404); // err zoom
     testTile(prefix, 20, 0, 0, 404); // zoom out of bounds

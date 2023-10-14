@@ -4,7 +4,7 @@ lint:
 	./node_modules/.bin/jshint lib test
 
 test: test_data
-	./node_modules/.bin/mocha --recursive
+	node --test
 
 %: /tmp/%.zip
 	unzip -q $< -d $@
