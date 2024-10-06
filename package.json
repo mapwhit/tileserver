@@ -21,7 +21,7 @@
   "devDependencies": {
     "@pirxpilot/jshint": "^3.0.1",
     "should": "~13",
-    "supertest": "~6"
+    "supertest": "~7"
   },
   "files": [
     "index.js",
