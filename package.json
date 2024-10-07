@@ -23,6 +23,9 @@
     "should": "~13",
     "supertest": "~7"
   },
+  "resolutions": {
+    "path-to-regexp": "0.1.11"
+  },
   "files": [
     "index.js",
     "lib"
