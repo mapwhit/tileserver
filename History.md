@@ -1,4 +1,11 @@
 
+3.2.3 / 2024-10-07
+==================
+
+ * force path-to-regexp to 0.1.11
+ * fix test runner invocation
+ * upgrade supertest to ~7
+
 3.2.2 / 2023-10-14
 ==================
 
