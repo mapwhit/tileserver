@@ -2,11 +2,16 @@
   "name": "@pirxpilot/tileserver-gl-tiny",
   "version": "3.2.3",
   "description": "Map tile server for JSON GL styles - serving vector tiles",
-  "bin": "bin/tileserver",
+  "bin": {
+    "tileserver-gl-tiny": "bin/tileserver"
+  },
   "authors": [
     "Petr Sloup <petr.sloup@klokantech.com>"
   ],
-  "repository": "pirxpilot/tileserver-gl",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pirxpilot/tileserver-gl.git"
+  },
   "license": "BSD-2-Clause",
   "scripts": {
     "test": "make check"
