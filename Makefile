@@ -4,7 +4,7 @@ lint:
 	./node_modules/.bin/jshint lib test
 
 test: test_data
-	node --test
+	node --test  --test-concurrency=1  test/tiles_data.js test/metadata.js
 
 %: /tmp/%.zip
 	unzip -q $< -d $@

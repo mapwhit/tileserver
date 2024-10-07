@@ -21,7 +21,10 @@
   "devDependencies": {
     "@pirxpilot/jshint": "^3.0.1",
     "should": "~13",
-    "supertest": "~6"
+    "supertest": "~7"
+  },
+  "resolutions": {
+    "path-to-regexp": "0.1.11"
   },
   "files": [
     "index.js",
