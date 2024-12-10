@@ -1,4 +1,11 @@
 
+3.2.4 / 2024-12-10
+==================
+
+ * force path-to-regexp to 0.1.12
+ * soft dependency update
+ * normalize package.json
+
 3.2.3 / 2024-10-07
 ==================
 
