@@ -29,7 +29,7 @@
     "supertest": "~7"
   },
   "resolutions": {
-    "path-to-regexp": "0.1.11"
+    "path-to-regexp": "0.1.12"
   },
   "files": [
     "index.js",
