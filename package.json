@@ -21,15 +21,12 @@
     "@pirxpilot/connect": "~4",
     "ms": "~2",
     "rc": "~1",
-    "router": "~1"
+    "router": "~2"
   },
   "devDependencies": {
     "@pirxpilot/jshint": "^3.0.1",
     "should": "~13",
     "supertest": "~7"
-  },
-  "resolutions": {
-    "path-to-regexp": "0.1.12"
   },
   "files": [
     "index.js",
