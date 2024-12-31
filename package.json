@@ -19,9 +19,9 @@
   "dependencies": {
     "@mapwhit/mbtiles": "^1.0.1",
     "@pirxpilot/connect": "~4",
+    "@pirxpilot/router": "~1",
     "ms": "~2",
-    "rc": "~1",
-    "router": "~2"
+    "rc": "~1"
   },
   "devDependencies": {
     "@pirxpilot/jshint": "^3.0.1",
