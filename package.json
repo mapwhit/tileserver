@@ -24,7 +24,7 @@
     "rc": "~1"
   },
   "devDependencies": {
-    "@pirxpilot/jshint": "^3.0.1",
+    "@biomejs/biome": "^1.9.4",
     "should": "~13",
     "supertest": "~7"
   },
