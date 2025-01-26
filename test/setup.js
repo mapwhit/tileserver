@@ -10,7 +10,6 @@ const config = Object.assign({
 }, require('../test_data/config.json'));
 
 before(function() {
-  console.log('global setup');
   process.chdir('test_data');
   const {
     app,
@@ -21,6 +20,5 @@ before(function() {
 });
 
 after(function() {
-  console.log('global teardown');
-  global.server.close(function() { console.log('Done'); });
+  global.server.close(function() {});
 });
