@@ -1,4 +1,10 @@
 
+3.3.0 / 2025-01-26
+==================
+
+ * dependency upgrade
+ * replace `router` with `@pirxpilot/router`
+
 3.2.5 / 2024-12-25
 ==================
 
