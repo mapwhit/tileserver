@@ -36,7 +36,7 @@ describe('Vector tiles', function () {
 
     it('should retrieve a specific tile', function (t, done) {
       // curl --compress https://localhost:8080/data/openmaptiles/5/0/0.pbf > test/fixtures/5-0-0.pbf
-      const body = require('fs').readFileSync(`${__dirname}/fixtures/5-0-0.pbf`);
+      const body = require('node:fs').readFileSync(`${__dirname}/fixtures/5-0-0.pbf`);
 
       supertest(app)
         .get(url(prefix, 5, 0, 0))
