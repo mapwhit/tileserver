@@ -7,16 +7,13 @@ const config = {
   port: 8888
 };
 
-before(function() {
+before(function () {
   process.chdir('test_data');
-  const {
-    app,
-    server
-  } = require('../lib/server')(config);
+  const { app, server } = require('../lib/server')(config);
   global.app = app;
   global.server = server;
 });
 
-after(function(done) {
+after(function (done) {
   global.server.close(done);
 });

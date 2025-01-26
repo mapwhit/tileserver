@@ -14,7 +14,8 @@ function testTile(prefix, z, x, y, status) {
   it(`${path} returns ${status}`, async function () {
     const test = supertest(global.app).get(path);
     if (status) await test.expect(status);
-    if (status === 200) await test.expect('Content-Type', /application\/x-protobuf/);
+    if (status === 200)
+      await test.expect('Content-Type', /application\/x-protobuf/);
   });
 }
 
@@ -38,7 +39,9 @@ describe('Vector tiles', function () {
 
     it('should retrieve a specific tile', async function () {
       // curl --compress https://localhost:8080/data/openmaptiles/5/0/0.pbf > test/fixtures/5-0-0.pbf
-      const body = require('node:fs').readFileSync(`${__dirname}/fixtures/5-0-0.pbf`);
+      const body = require('node:fs').readFileSync(
+        `${__dirname}/fixtures/5-0-0.pbf`
+      );
 
       const res = await supertest(global.app)
         .get(url(prefix, 5, 0, 0))
