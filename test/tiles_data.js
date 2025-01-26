@@ -11,7 +11,7 @@ function testTile(prefix, z, x, y, status) {
   it(`${path} returns ${status}`, function (t, done) {
     const test = supertest(app).get(path);
     if (status) test.expect(status);
-    if (status == 200) test.expect('Content-Type', /application\/x-protobuf/);
+    if (status === 200) test.expect('Content-Type', /application\/x-protobuf/);
     test.end(done);
   });
 }
