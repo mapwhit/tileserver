@@ -1,4 +1,7 @@
 const { describe, it } = require('node:test');
+const assert = require('node:assert/strict');
+
+const supertest = require('supertest');
 
 require('./setup');
 
@@ -8,11 +11,11 @@ function url(prefix, z, x, y) {
 
 function testTile(prefix, z, x, y, status) {
   const path = url(prefix, z, x, y);
-  it(`${path} returns ${status}`, function (t, done) {
-    const test = supertest(app).get(path);
-    if (status) test.expect(status);
-    if (status == 200) test.expect('Content-Type', /application\/x-protobuf/);
-    test.end(done);
+  it(`${path} returns ${status}`, async function () {
+    const test = supertest(global.app).get(path);
+    if (status) await test.expect(status);
+    if (status === 200)
+      await test.expect('Content-Type', /application\/x-protobuf/);
   });
 }
 
@@ -34,22 +37,22 @@ describe('Vector tiles', function () {
     testTile(prefix, 0, 0, 0, 200);
     testTile(prefix, 14, 8581, 5738, 200);
 
-    it('should retrieve a specific tile', function (t, done) {
+    it('should retrieve a specific tile', async function () {
       // curl --compress https://localhost:8080/data/openmaptiles/5/0/0.pbf > test/fixtures/5-0-0.pbf
-      const body = require('fs').readFileSync(`${__dirname}/fixtures/5-0-0.pbf`);
+      const body = require('node:fs').readFileSync(
+        `${__dirname}/fixtures/5-0-0.pbf`
+      );
 
-      supertest(app)
+      const res = await supertest(global.app)
         .get(url(prefix, 5, 0, 0))
         .expect(200)
         .expect('Content-Type', /application\/x-protobuf/)
         // please note - supertest will gunzip the response for us
         .expect('Content-Encoding', 'gzip')
         .buffer()
-        .parse(binaryParser)
-        .end(function (err, res) {
-          res.body.should.eql(body);
-          done(err);
-        });
+        .parse(binaryParser);
+
+      assert.deepEqual(res.body, body);
     });
   });
 
