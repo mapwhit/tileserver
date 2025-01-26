@@ -8,7 +8,7 @@ format:
 
 TEST_OPTS := --test-concurrency=1
 test: test_data
-	node --test $(TEST_OPTS) test/tiles_data.js test/metadata.js
+	node --test $(TEST_OPTS) test/tiles.js test/metadata.js
 
 test-cov: TEST_OPTS += --experimental-test-coverage
 test-cov: test
