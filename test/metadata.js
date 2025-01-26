@@ -1,42 +1,48 @@
 const { describe, it } = require('node:test');
+const assert = require('node:assert/strict');
+
+const supertest = require('supertest');
 
 require('./setup');
 
+const { app } = global;
+
 function testTileJSONArray(url) {
   describe(`${url} is array of TileJSONs`, function () {
-    it('is json', function (t, done) {
-      supertest(app)
+    it('is json', async function () {
+      await supertest(app)
         .get(url)
         .expect(200)
-        .expect('Content-Type', /application\/json/, done);
+        .expect('Content-Type', /application\/json/);
     });
 
-    it('is non-empty array', function (t, done) {
-      supertest(app)
+    it('is non-empty array', async function () {
+      await supertest(app)
         .get(url)
         .expect(function (res) {
-          res.body.should.be.Array();
-          res.body.length.should.be.greaterThan(0);
-        }).end(done);
+          assert.ok(Array.isArray(res.body));
+          assert.ok(res.body.length > 0);
+        });
     });
   });
 }
 
 function testTileJSON(url) {
   describe(`${url} is TileJSON`, function () {
-    it('is json', function (t, done) {
-      supertest(app)
+    it('is json', async function () {
+      await supertest(app)
         .get(url)
         .expect(200)
-        .expect('Content-Type', /application\/json/, done);
+        .expect('Content-Type', /application\/json/);
     });
 
-    it('has valid tiles', function (t, done) {
-      supertest(app)
+    it('has valid tiles', async function () {
+      await supertest(app)
         .get(url)
         .expect(function (res) {
-          res.body.tiles.length.should.be.greaterThan(0);
-        }).end(done);
+          assert.ok(Array.isArray(res.body.tiles));
+          assert.ok(res.body.tiles.length > 0);
+        });
     });
   });
 }

@@ -2,12 +2,10 @@ const { before, after } = require('node:test');
 
 process.env.NODE_ENV = 'test';
 
-global.should = require('should');
-global.supertest = require('supertest');
-
-const config = Object.assign({
+const config = {
+  ...require('../test_data/config.json'),
   port: 8888
-}, require('../test_data/config.json'));
+};
 
 before(function() {
   process.chdir('test_data');
@@ -19,6 +17,6 @@ before(function() {
   global.server = server;
 });
 
-after(function() {
-  global.server.close(function() {});
+after(function(done) {
+  global.server.close(done);
 });
