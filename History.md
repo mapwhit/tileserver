@@ -1,4 +1,11 @@
 
+3.4.0 / 2025-01-28
+==================
+
+ * add support for server-timings
+ * remove support for compressing tiles
+ * remove ETag only if `removeETag` option is set
+
 3.3.1 / 2025-01-27
 ==================
 
