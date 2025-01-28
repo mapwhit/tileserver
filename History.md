@@ -1,4 +1,13 @@
 
+3.3.1 / 2025-01-27
+==================
+
+ * use createTileJSON to build all data responses
+ * move all responsibility of determining the mount path up to a server
+ * optimize `req.protocol` calculation
+ * improve router mounting point
+ * simplify `serveData` function
+
 3.3.0 / 2025-01-26
 ==================
 
