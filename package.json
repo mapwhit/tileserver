@@ -3,6 +3,7 @@
   "version": "3.5.1",
   "description": "Map tile server for JSON GL styles - serving vector tiles",
   "bin": {
+    "tileserver": "bin/tileserver",
     "tileserver-gl-tiny": "bin/tileserver"
   },
   "authors": [
