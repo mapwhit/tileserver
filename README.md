@@ -2,7 +2,7 @@
 [![Build Status][build-image]][build-url]
 [![Dependency Status][deps-image]][deps-url]
 
-# TileServer GL Tiny
+# @mapwhit/tileserver
 
 This is a slimmed down clone of the [tileserver-gl] package.
 It's intended to be used as a standalone server for tiles in [mbtiles] format.
@@ -16,7 +16,7 @@ The following features of the original are not supported:
 ## Installation
 
 ```sh
-npm install -g @pirxpilot/tileserver-gl-tiny
+npm install -g @mapwhit/tileserver-gl-tiny
 ```
 
 
@@ -60,12 +60,12 @@ Most of the [tileserver-gl documentation] is relevant - specifically parts relat
 [tileserver-gl documentation]: http://tileserver.readthedocs.io
 [map-glyph-server]: https://github.com/furkot/map-glyph-server
 
-[npm-image]: https://img.shields.io/npm/v/@pirxpilot/tileserver-gl-tiny
-[npm-url]: https://npmjs.org/package/@pirxpilot/tileserver-gl-tiny
+[npm-image]: https://img.shields.io/npm/v/@mapwhit/tileserver
+[npm-url]: https://npmjs.org/package/@mapwhit/tileserver
 
-[build-image]: https://img.shields.io/github/actions/workflow/status/pirxpilot/tileserver-gl/check.yaml?branch=main
-[build-url]: https://github.com/pirxpilot/tileserver-gl/actions/workflows/check.yaml
+[build-image]: https://img.shields.io/github/actions/workflow/status/mapwhit/tileserver/check.yaml?branch=main
+[build-url]: https://github.com/mapwhit/tileserver/actions/workflows/check.yaml
 
-[deps-image]: https://img.shields.io/librariesio/release/npm/@pirxpilot/tileserver-gl-tiny
-[deps-url]: https://libraries.io/npm/@pirxpilot%2Ftileserver-gl-tiny
+[deps-image]: https://img.shields.io/librariesio/release/npm/@mapwhit/tileserver
+[deps-url]: https://libraries.io/npm/@mapwhit%2Ftileserver
 
