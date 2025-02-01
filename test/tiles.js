@@ -17,6 +17,7 @@ describe('Vector tiles', function () {
       assert.equal(status, 200);
       assert.equal(headers.get('Content-Encoding'), 'gzip');
       assert.match(headers.get('Content-Type'), /application\/x-protobuf/);
+      assert.equal(headers.get('Content-Length'), '78');
 
       // curl --compress https://localhost:5080/data/openmaptiles/5/0/0.pbf > test/fixtures/5-0-0.pbf
       const pbf = await readFile(`${__dirname}/fixtures/5-0-0.pbf`);
