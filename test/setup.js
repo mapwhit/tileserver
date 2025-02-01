@@ -12,6 +12,8 @@ before(function (_, done) {
   const { app, server } = require('../lib/server')(config, done);
   global.app = app;
   global.server = server;
+  const { port } = server.address();
+  global.prefix = `http://localhost:${port}`;
 });
 
 after(function (done) {
