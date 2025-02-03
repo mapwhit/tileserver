@@ -22,6 +22,8 @@
     "@mapwhit/mbtiles": "^1.0.1",
     "@pirxpilot/connect": "~4",
     "@pirxpilot/router": "~1",
+    "etag": "~1",
+    "fresh": "~2",
     "ms": "~2",
     "rc": "~1",
     "server-timings": "~2"
