@@ -18,6 +18,10 @@ describe('Vector tiles', function () {
       assert.equal(headers.get('Content-Encoding'), 'gzip');
       assert.match(headers.get('Content-Type'), /application\/x-protobuf/);
       assert.equal(headers.get('Content-Length'), '78');
+      assert.match(
+        headers.get('Last-Modified'),
+        /\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} GMT/
+      );
 
       // curl --compress https://localhost:5080/data/openmaptiles/5/0/0.pbf > test/fixtures/5-0-0.pbf
       const pbf = await readFile(`${__dirname}/fixtures/5-0-0.pbf`);
@@ -26,6 +30,16 @@ describe('Vector tiles', function () {
 
       assert.deepEqual(Buffer.from(body), pbf);
     });
+  });
+
+  it('should return 304 for a fresh tile', async function () {
+    const res = await fetch(url(prefix, 5, 0, 0), {
+      headers: {
+        'If-Modified-Since': 'Thu, 01 Dec 2017 00:00:00 GMT',
+        'Cache-Control': ''
+      }
+    });
+    assert.equal(res.status, 304);
   });
 
   describe('non-existent requests return 4xx', function () {
