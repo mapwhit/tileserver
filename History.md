@@ -1,4 +1,10 @@
 
+3.6.0 / 2025-02-02
+==================
+
+ * generate `ETag` header unless `noETag` option is set
+ * check response freshness for cache validation request
+
 3.5.3 / 2025-02-01
 ==================
 
