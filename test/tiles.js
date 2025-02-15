@@ -22,7 +22,7 @@ describe('Vector tiles', function () {
         headers.get('Last-Modified'),
         /\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} GMT/
       );
-      assert.equal(headers.get('ETag'), '"27b6-QJ2aSo5Bz+DKQKYMr3bSYerGzw0"');
+      assert.equal(headers.get('ETag'), '"4e-a4fCMtiBoIPwnj8aw4yBhJyXAbc"');
 
       // curl --compress https://localhost:5080/data/openmaptiles/5/0/0.pbf > test/fixtures/5-0-0.pbf
       const pbf = await readFile(`${__dirname}/fixtures/5-0-0.pbf`);
@@ -46,7 +46,7 @@ describe('Vector tiles', function () {
   it('should return 304 for a fresh tile with matching ETag', async function () {
     const res = await fetch(url(prefix, 5, 0, 0), {
       headers: {
-        'If-None-Match': '"27b6-QJ2aSo5Bz+DKQKYMr3bSYerGzw0"',
+        'If-None-Match': '"4e-a4fCMtiBoIPwnj8aw4yBhJyXAbc"',
         'Cache-Control': ''
       }
     });
