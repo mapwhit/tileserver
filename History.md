@@ -1,4 +1,9 @@
 
+3.7.0 / 2025-02-14
+==================
+
+ * generate ETag unless `noETag` option specified
+
 3.6.1 / 2025-02-13
 ==================
 
