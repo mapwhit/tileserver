@@ -7,16 +7,13 @@ format:
 	./node_modules/.bin/biome format --write
 
 TEST_OPTS := --test-concurrency=1
-test: test_data
+test: test/fixtures/test_data/countries.mbtiles
 	node --test $(TEST_OPTS) test/tiles.js test/metadata.js
 
 test-cov: TEST_OPTS += --experimental-test-coverage
 test-cov: test
 
-%: /tmp/%.zip
-	unzip -q $< -d $@
-
-/tmp/%.zip:
-	wget -O $@ https://github.com/klokantech/tileserver-gl/releases/download/v1.3.0/$(@F)
+test/fixtures/test_data/countries.mbtiles:
+	wget -S -O $@ https://github.com/klokantech/vector-tiles-sample/releases/download/v1.0/countries.mbtiles
 
 .PHONY: check lint format test test-cov

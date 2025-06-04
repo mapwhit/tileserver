@@ -1,14 +1,24 @@
 const { before, after } = require('node:test');
+const path = require('node:path');
 
 process.env.NODE_ENV = 'test';
 
 const config = {
-  ...require('../test_data/config.json'),
+  options: {
+    paths: {
+      root: path.resolve(__dirname, './fixtures/test_data')
+    }
+  },
+  data: {
+    openmaptiles: {
+      mbtiles: 'countries.mbtiles'
+    }
+  },
   port: 8888
 };
 
 before(function (_, done) {
-  process.chdir('test_data');
+  // process.chdir(path.resolve(__dirname, './fixtures/test_data'));
   const { app, server } = require('../lib/server')(config, done);
   global.app = app;
   global.server = server;
