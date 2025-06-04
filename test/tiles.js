@@ -9,34 +9,32 @@ const prefix = 'openmaptiles';
 describe('Vector tiles', function () {
   describe('existing tiles', function () {
     testTile(prefix, 0, 0, 0, 200);
-    testTile(prefix, 14, 8581, 5738, 200);
+    testTile(prefix, 6, 0, 0, 200);
 
     it('should retrieve a specific tile', async function () {
-      const res = await fetch(url(prefix, 5, 0, 0));
+      const res = await fetch(url(prefix, 5, 16, 11));
       const { status, headers } = res;
       assert.equal(status, 200);
       assert.equal(headers.get('Content-Encoding'), 'gzip');
       assert.match(headers.get('Content-Type'), /application\/x-protobuf/);
-      assert.equal(headers.get('Content-Length'), '78');
+      assert.equal(headers.get('Content-Length'), '15306');
       assert.match(
         headers.get('Last-Modified'),
         /\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} GMT/
       );
-      assert.equal(headers.get('ETag'), '"4e-a4fCMtiBoIPwnj8aw4yBhJyXAbc"');
-
-      // curl --compress https://localhost:5080/data/openmaptiles/5/0/0.pbf > test/fixtures/5-0-0.pbf
-      const pbf = await readFile(`${__dirname}/fixtures/5-0-0.pbf`);
-
+      assert.equal(headers.get('ETag'), '"3bca-Iq1waT78kNVJwPtrQZerCU7/GH0"');
       const body = await res.arrayBuffer();
+      // await writeFile(`${__dirname}/fixtures/5-0-0.pbf`, Buffer.from(body));
 
+      const pbf = await readFile(`${__dirname}/fixtures/5-0-0.pbf`);
       assert.deepEqual(Buffer.from(body), pbf);
     });
   });
 
   it('should return 304 for a fresh tile', async function () {
-    const res = await fetch(url(prefix, 5, 0, 0), {
+    const res = await fetch(url(prefix, 5, 16, 11), {
       headers: {
-        'If-Modified-Since': 'Thu, 01 Dec 2017 00:00:00 GMT',
+        'If-Modified-Since': 'Wed, 15 Dec 2021 00:00:00 GMT',
         'Cache-Control': ''
       }
     });
@@ -44,9 +42,9 @@ describe('Vector tiles', function () {
   });
 
   it('should return 304 for a fresh tile with matching ETag', async function () {
-    const res = await fetch(url(prefix, 5, 0, 0), {
+    const res = await fetch(url(prefix, 5, 16, 11), {
       headers: {
-        'If-None-Match': '"4e-a4fCMtiBoIPwnj8aw4yBhJyXAbc"',
+        'If-None-Match': '"3bca-Iq1waT78kNVJwPtrQZerCU7/GH0"',
         'Cache-Control': ''
       }
     });
