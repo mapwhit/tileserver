@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 
 require('./setup');
 
-const { app, prefix } = global;
+const { prefix } = global;
 
 function testTileJSONArray(url) {
   describe(`${url} is array of TileJSONs`, function () {
