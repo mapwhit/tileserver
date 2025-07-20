@@ -4,7 +4,7 @@ lint:
 	./node_modules/.bin/biome ci
 
 format:
-	./node_modules/.bin/biome format --write
+	./node_modules/.bin/biome check --write
 
 TEST_OPTS := --test-concurrency=1
 test: test/fixtures/test_data/countries.mbtiles
