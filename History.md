@@ -1,4 +1,11 @@
 
+3.7.2 / 2025-07-20
+==================
+
+ * soft dependency update
+ * upgrade biome to 2.1.2
+ * simplify test configuration
+
 3.7.1 / 2025-06-03
 ==================
 
