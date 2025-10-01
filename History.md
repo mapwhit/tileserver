@@ -1,4 +1,10 @@
 
+3.7.3 / 2025-09-30
+==================
+
+ * update github actions
+ * soft dependency update
+
 3.7.2 / 2025-07-20
 ==================
 
