@@ -1,12 +1,15 @@
-const ms = require('ms');
-const config = require('rc')('tiles', {
+import ms from 'ms';
+import rc from 'rc';
+import makeServer from './lib/server';
+import packageJSON from './package.json' with { type: 'json' };
+
+const { name, version } = packageJSON;
+
+const config = rc('tiles', {
   port: process.env.PORT || 5080,
   bind: process.env.BIND
   // max-age: // 'max-age for Cache-Control header: "5d", "3h", "1y" etc.'
 });
-
-const { name, version } = require('./package.json');
-const makeServer = require('./lib/server');
 
 function startServer() {
   config.cacheControl = cacheControl(config['max-age']);
