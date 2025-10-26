@@ -1,4 +1,12 @@
 
+4.0.0 / 2025-10-26
+==================
+
+ * soft dependency update
+ * update github actions
+ * transition to ESM format
+ * upgrade `biome` to 2.3.1
+
 3.7.3 / 2025-09-30
 ==================
 
