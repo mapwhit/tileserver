@@ -5,12 +5,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ['latest']
+        node: ['lts/*']
     name: Check on node ${{ matrix.node }}
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
+          cache: yarn
+
       - run: yarn install
       - run: make
