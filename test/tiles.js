@@ -1,8 +1,8 @@
-const { describe, it } = require('node:test');
-const assert = require('node:assert/strict');
-const { readFile } = require('node:fs/promises');
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { describe, it } from 'node:test';
 
-require('./setup');
+import './setup.js';
 
 const prefix = 'openmaptiles';
 
@@ -24,9 +24,9 @@ describe('Vector tiles', () => {
       );
       assert.equal(headers.get('ETag'), '"3bca-Iq1waT78kNVJwPtrQZerCU7/GH0"');
       const body = await res.arrayBuffer();
-      // await writeFile(`${__dirname}/fixtures/5-0-0.pbf`, Buffer.from(body));
+      // await writeFile(`${import.meta.dirname}/fixtures/5-0-0.pbf`, Buffer.from(body));
 
-      const pbf = await readFile(`${__dirname}/fixtures/5-0-0.pbf`);
+      const pbf = await readFile(`${import.meta.dirname}/fixtures/5-0-0.pbf`);
       assert.deepEqual(Buffer.from(body), pbf);
     });
   });

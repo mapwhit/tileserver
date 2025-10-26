@@ -14,6 +14,7 @@
     "type": "git",
     "url": "git+https://github.com/mapwhit/tileserver.git"
   },
+  "type": "module",
   "license": "BSD-2-Clause",
   "scripts": {
     "test": "make check"
