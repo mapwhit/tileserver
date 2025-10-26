@@ -6,12 +6,12 @@ require('./setup');
 
 const prefix = 'openmaptiles';
 
-describe('Vector tiles', function () {
-  describe('existing tiles', function () {
+describe('Vector tiles', () => {
+  describe('existing tiles', () => {
     testTile(prefix, 0, 0, 0, 200);
     testTile(prefix, 6, 0, 0, 200);
 
-    it('should retrieve a specific tile', async function () {
+    it('should retrieve a specific tile', async () => {
       const res = await fetch(url(prefix, 5, 16, 11));
       const { status, headers } = res;
       assert.equal(status, 200);
@@ -31,7 +31,7 @@ describe('Vector tiles', function () {
     });
   });
 
-  it('should return 304 for a fresh tile', async function () {
+  it('should return 304 for a fresh tile', async () => {
     const res = await fetch(url(prefix, 5, 16, 11), {
       headers: {
         'If-Modified-Since': 'Wed, 15 Dec 2021 00:00:00 GMT',
@@ -41,7 +41,7 @@ describe('Vector tiles', function () {
     assert.equal(res.status, 304);
   });
 
-  it('should return 304 for a fresh tile with matching ETag', async function () {
+  it('should return 304 for a fresh tile with matching ETag', async () => {
     const res = await fetch(url(prefix, 5, 16, 11), {
       headers: {
         'If-None-Match': '"3bca-Iq1waT78kNVJwPtrQZerCU7/GH0"',
@@ -51,7 +51,7 @@ describe('Vector tiles', function () {
     assert.equal(res.status, 304);
   });
 
-  describe('non-existent requests return 4xx', function () {
+  describe('non-existent requests return 4xx', () => {
     testTile('non_existent', 0, 0, 0, 404);
     testTile(prefix, -1, 0, 0, 404); // err zoom
     testTile(prefix, 20, 0, 0, 404); // zoom out of bounds
@@ -68,7 +68,7 @@ function url(prefix, z, x, y) {
 
 function testTile(prefix, z, x, y, status) {
   const path = url(prefix, z, x, y);
-  it(`${path} returns ${status}`, async function () {
+  it(`${path} returns ${status}`, async () => {
     const res = await fetch(path);
     if (status) {
       assert.equal(res.status, status);

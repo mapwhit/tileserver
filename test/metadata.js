@@ -6,15 +6,15 @@ require('./setup');
 const { prefix } = global;
 
 function testTileJSONArray(url) {
-  describe(`${url} is array of TileJSONs`, function () {
-    it('is json', async function () {
+  describe(`${url} is array of TileJSONs`, () => {
+    it('is json', async () => {
       const res = await fetch(prefix + url);
 
       assert.equal(res.status, 200);
       assert.match(res.headers.get('Content-Type'), /application\/json/);
     });
 
-    it('is non-empty array', async function () {
+    it('is non-empty array', async () => {
       const res = await fetch(prefix + url);
 
       const body = await res.json();
@@ -25,15 +25,15 @@ function testTileJSONArray(url) {
 }
 
 function testTileJSON(url) {
-  describe(`${url} is TileJSON`, function () {
-    it('is json', async function () {
+  describe(`${url} is TileJSON`, () => {
+    it('is json', async () => {
       const res = await fetch(prefix + url);
 
       assert.equal(res.status, 200);
       assert.match(res.headers.get('Content-Type'), /application\/json/);
     });
 
-    it('has valid tiles', async function () {
+    it('has valid tiles', async () => {
       const res = await fetch(prefix + url);
 
       const body = await res.json();
@@ -43,7 +43,7 @@ function testTileJSON(url) {
   });
 }
 
-describe('Metadata', function () {
+describe('Metadata', () => {
   testTileJSONArray('/index.json');
   testTileJSONArray('/data.json');
 

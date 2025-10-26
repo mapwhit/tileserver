@@ -17,7 +17,7 @@ const config = {
   port: 8888
 };
 
-before(function (_, done) {
+before((_, done) => {
   // process.chdir(path.resolve(__dirname, './fixtures/test_data'));
   const { app, server } = require('../lib/server')(config, done);
   global.app = app;
@@ -26,6 +26,6 @@ before(function (_, done) {
   global.prefix = `http://localhost:${port}`;
 });
 
-after(function (done) {
+after(done => {
   global.server.close(done);
 });
