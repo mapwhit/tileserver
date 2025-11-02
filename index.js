@@ -1,6 +1,6 @@
 import ms from 'ms';
 import rc from 'rc';
-import makeServer from './lib/server';
+import makeServer from './lib/server.js';
 import packageJSON from './package.json' with { type: 'json' };
 
 const { name, version } = packageJSON;
