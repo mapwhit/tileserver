@@ -1,6 +1,6 @@
 {
   "name": "@mapwhit/tileserver",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Map tile server for JSON GL styles - serving vector tiles",
   "bin": {
     "tileserver": "bin/tileserver",

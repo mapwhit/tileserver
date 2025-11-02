@@ -1,4 +1,11 @@
 
+4.0.1 / 2025-11-02
+==================
+
+ * fix import in index.js
+ * add regex to path pattern
+ * upgrade `@pirxpilot/router` to ~2
+
 4.0.0 / 2025-10-26
 ==================
 
