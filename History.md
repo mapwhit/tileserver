@@ -1,4 +1,11 @@
 
+4.0.2 / 2026-01-16
+==================
+
+ * soft dependency update
+ * upgrade `@pirxpilot/connect` to 5.0.0
+ * replace `yarn` with `pnpm`
+
 4.0.1 / 2025-11-02
 ==================
 
