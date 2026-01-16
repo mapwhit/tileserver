@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@mapwhit/mbtiles':
         specifier: ^1.0.1
-        version: 1.3.1
+        version: 1.3.2
       '@pirxpilot/connect':
         specifier: ~5
         version: 5.0.0
@@ -97,8 +97,8 @@ packages:
     resolution: {integrity: sha512-jIMABS+S9wpqmCulD1whea3YJXaLEPJq7f7Dae3TrB4cFImNXsTEvKt91DOdcJWpgsV1mVxorxUiqvcVVWKxTg==}
     hasBin: true
 
-  '@mapwhit/mbtiles@1.3.1':
-    resolution: {integrity: sha512-Ymr++MK3y/d6OP4QvkjMQmzhpQ93MpRMYOPXvs/Zlv+uaDp6WpEg1SdQlH9xavsHfb+W9rEO6cBfkfp7XM1g8Q==}
+  '@mapwhit/mbtiles@1.3.2':
+    resolution: {integrity: sha512-LblOIxGD2xH5E+wTFfANQVVA1vahl/iSxAVvJZrmw4I7bydL4hXVTU2UzAz2qLqEVXLgWzEGwCqhCSdVA3Detg==}
     engines: {node: '>= 12'}
 
   '@pirxpilot/connect@5.0.0':
@@ -111,9 +111,9 @@ packages:
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
-  better-sqlite3@12.4.1:
-    resolution: {integrity: sha512-3yVdyZhklTiNrtg+4WqHpJpFDd+WHTg2oM7UcR80GqL05AOV0xEJzc6qNvFYoEtE+hRp1n9MpN6/+4yhlGkDXQ==}
-    engines: {node: 20.x || 22.x || 23.x || 24.x}
+  better-sqlite3@12.6.0:
+    resolution: {integrity: sha512-FXI191x+D6UPWSze5IzZjhz+i9MK9nsuHsmTX9bXVl52k06AfZ2xql0lrgIUuzsMsJ7Vgl5kIptvDgBLIV3ZSQ==}
+    engines: {node: 20.x || 22.x || 23.x || 24.x || 25.x}
 
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
@@ -193,8 +193,8 @@ packages:
   napi-build-utils@2.0.0:
     resolution: {integrity: sha512-GEbrYkbfF7MoNaoh2iGG84Mnf/WZfB0GdGEsM8wz7Expx/LlWf5U8t9nvJKXSp3qr5IsEbK04cBGhol/KwOsWA==}
 
-  node-abi@3.78.0:
-    resolution: {integrity: sha512-E2wEyrgX/CqvicaQYU3Ze1PFGjc4QYPGsjUrlYkqAE0WjHEZwgOsGMPMzkMse4LjJbDmaEuDX3CM036j5K2DSQ==}
+  node-abi@3.86.0:
+    resolution: {integrity: sha512-sn9Et4N3ynsetj3spsZR729DVlGH6iBG4RiDMV7HEp3guyOW6W3S0unGpLDxT50mXortGUMax/ykUNQXdqc/Xg==}
     engines: {node: '>=10'}
 
   on-headers@1.1.0:
@@ -305,11 +305,11 @@ snapshots:
 
   '@mapbox/tiletype@0.3.1': {}
 
-  '@mapwhit/mbtiles@1.3.1':
+  '@mapwhit/mbtiles@1.3.2':
     dependencies:
       '@mapbox/sphericalmercator': 1.2.0
       '@mapbox/tiletype': 0.3.1
-      better-sqlite3: 12.4.1
+      better-sqlite3: 12.6.0
 
   '@pirxpilot/connect@5.0.0':
     dependencies:
@@ -324,7 +324,7 @@ snapshots:
 
   base64-js@1.5.1: {}
 
-  better-sqlite3@12.4.1:
+  better-sqlite3@12.6.0:
     dependencies:
       bindings: 1.5.0
       prebuild-install: 7.1.3
@@ -388,7 +388,7 @@ snapshots:
 
   napi-build-utils@2.0.0: {}
 
-  node-abi@3.78.0:
+  node-abi@3.86.0:
     dependencies:
       semver: 7.7.3
 
@@ -408,7 +408,7 @@ snapshots:
       minimist: 1.2.8
       mkdirp-classic: 0.5.3
       napi-build-utils: 2.0.0
-      node-abi: 3.78.0
+      node-abi: 3.86.0
       pump: 3.0.3
       rc: 1.2.8
       simple-get: 4.0.1
