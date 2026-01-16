@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@mapwhit/mbtiles": "^1.0.1",
-    "@pirxpilot/connect": "~4",
+    "@pirxpilot/connect": "~5",
     "@pirxpilot/router": "~2",
     "fresh": "~2",
     "ms": "~2",
