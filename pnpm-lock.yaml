@@ -16,7 +16,7 @@ importers:
         version: 5.0.0
       '@pirxpilot/router':
         specifier: ~2
-        version: 2.0.0
+        version: 2.0.3
       fresh:
         specifier: ~2
         version: 2.0.0
@@ -107,8 +107,8 @@ packages:
   '@pirxpilot/connect@5.0.0':
     resolution: {integrity: sha512-usjYGr5xcJvjdAwSFE+AGBiaPFcrb4pMVVFTOLVAjkkjSxew8by0r14mfq7gwA0G6MlkIfRYoakwrZIXIv/ikw==}
 
-  '@pirxpilot/router@2.0.0':
-    resolution: {integrity: sha512-1lplDim8DZXj8R4zSW+3/DQ3FDbaNTa1uejS7ZL+/VEIBlsoxtdY+qQ9ch3gory6QCmVUqncEh3rh8QV59XNgQ==}
+  '@pirxpilot/router@2.0.3':
+    resolution: {integrity: sha512-BjpOQKZxbsTGlmk3FLAsGuZuvaEYaVtd8J5n6Mt28jwLxpm85Ld3c7rfCxueY4F18o6jU3yGbCX7+KsqB+PfoQ==}
     engines: {node: '>= 23.8.0'}
 
   debug@4.4.3:
@@ -209,7 +209,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@pirxpilot/router@2.0.0':
+  '@pirxpilot/router@2.0.3':
     dependencies:
       parseurl: 1.3.3
 
