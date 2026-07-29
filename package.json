@@ -2,20 +2,20 @@
   "name": "@mapwhit/tileserver",
   "version": "4.0.2",
   "description": "Map tile server for JSON GL styles - serving vector tiles",
-  "bin": {
-    "tileserver": "bin/tileserver",
-    "tileserver-gl-tiny": "bin/tileserver"
-  },
-  "authors": [
-    "Petr Sloup <petr.sloup@klokantech.com>",
-    "Damian Krzeminski <pirxpilot@furkot.com>"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mapwhit/tileserver.git"
   },
-  "type": "module",
   "license": "BSD-2-Clause",
+  "type": "module",
+  "bin": {
+    "tileserver": "bin/tileserver",
+    "tileserver-gl-tiny": "bin/tileserver"
+  },
+  "files": [
+    "index.js",
+    "lib"
+  ],
   "scripts": {
     "test": "make check"
   },
@@ -29,10 +29,10 @@
     "server-timings": "~2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.1"
+    "@biomejs/biome": "2.5.6"
   },
-  "files": [
-    "index.js",
-    "lib"
+  "authors": [
+    "Petr Sloup <petr.sloup@klokantech.com>",
+    "Damian Krzeminski <pirxpilot@furkot.com>"
   ]
 }
