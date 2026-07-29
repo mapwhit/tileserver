@@ -20,7 +20,7 @@
     "test": "make check"
   },
   "dependencies": {
-    "@mapwhit/mbtiles": "^1.0.1",
+    "@mapwhit/mbtiles": "^2.1.0",
     "@pirxpilot/connect": "~5",
     "@pirxpilot/router": "~2",
     "fresh": "~2",
