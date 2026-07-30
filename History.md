@@ -1,4 +1,9 @@
 
+5.0.0 / 2026-07-30
+==================
+
+ * upgrade `@mapwhit/mbtiles` to version 2 - use node:sqlite 
+
 4.0.2 / 2026-01-16
 ==================
 
